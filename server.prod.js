@@ -116,7 +116,7 @@ app.use((err, req, res, next) => {
 
 // 处理所有其他路由，返回主页
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 const PORT = process.env.PORT || 8080;
