@@ -62,39 +62,38 @@ async function generateImage() {
 
     try {
         console.log('Sending request to server...');
-        const response = await fetch('/api/generate-image', {
+        const response = await fetch('https://api.siliconflow.cn/v1/images/generations', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
                 prompt: prompt,
                 negative_prompt: negativePrompt,
-                apiKey: apiKey,
                 model: model,
-                imageSize: imageSize,
-                guidanceScale: guidanceScale,
-                inferenceSteps: inferenceSteps,
+                image_size: imageSize,
+                guidance_scale: guidanceScale,
+                num_inference_steps: inferenceSteps,
                 seed: seed
             })
         });
 
-        const errorData = await response.json();
+        const data = await response.json();
         if (!response.ok) {
-            throw new Error(errorData.message || errorData.error || `HTTP error! status: ${response.status}`);
+            throw new Error(data.error || data.message || `HTTP error! status: ${response.status}`);
         }
 
-        console.log('Response from server:', errorData);
+        console.log('Response from server:', data);
         
-        if (errorData.error) {
-            throw new Error(errorData.message || errorData.error);
+        if (data.error) {
+            throw new Error(data.message || data.error);
         }
 
-        if (errorData.data && errorData.data.length > 0) {
-            const imageData = errorData.data[0];
+        if (data.images && data.images.length > 0) {
+            const imageData = data.images[0];
             const img = document.createElement('img');
-            img.src = imageData.url || imageData.image_url;
+            img.src = imageData.url;
             img.style.cursor = 'pointer';
             img.title = '点击下载图片';
             img.onclick = () => downloadImage(img.src);
