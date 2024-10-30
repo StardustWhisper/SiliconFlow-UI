@@ -49,13 +49,13 @@ module.exports = async (req, res) => {
         };
 
         console.log('Sending request to SiliconFlow API:', {
-            url: 'https://api.siliconflow.cn/v1/image/generations',
+            url: 'https://api.siliconflow.cn/v1/images/generations',
             ...requestBody,
             apiKey: '***' // 隐藏 API Key
         });
 
         const response = await axios.post(
-            'https://api.siliconflow.cn/v1/image/generations',
+            'https://api.siliconflow.cn/v1/images/generations',
             requestBody,
             config
         );
@@ -63,15 +63,22 @@ module.exports = async (req, res) => {
         console.log('Response from SiliconFlow:', response.data);
 
         // 检查响应数据的结构
-        if (!response.data || !response.data.data || !Array.isArray(response.data.data)) {
+        if (!response.data || !response.data.images || !Array.isArray(response.data.images)) {
             throw new Error('API 返回的数据格式不正确');
         }
 
-        if (response.data.data.length === 0) {
+        if (response.data.images.length === 0) {
             throw new Error('API 未返回任何图片数据');
         }
 
-        res.json(response.data);
+        // 转换响应格式以匹配前端期望的格式
+        const transformedResponse = {
+            data: response.data.images.map(image => ({
+                url: image.url
+            }))
+        };
+
+        res.json(transformedResponse);
     } catch (error) {
         console.error('Error details:', {
             message: error.message,
