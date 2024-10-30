@@ -96,6 +96,8 @@ async function generateImage() {
             const imageData = data.data[0];
             const img = document.createElement('img');
             img.src = imageData.url || imageData.image_url;
+            img.style.cursor = 'pointer';
+            img.title = '点击下载图片';
             img.onclick = () => downloadImage(img.src);
             imageContainer.appendChild(img);
             showStatus('图片生成完成！');
@@ -128,11 +130,11 @@ async function downloadImage(imageUrl) {
         // 构建文件名
         const fileName = `${model}_GS${guidanceScale}_Steps${inferenceSteps}_Seed${seed}_${dateStr}_${timeStr}.png`;
         
-        const downloadUrl = `/api/download-image?url=${encodeURIComponent(imageUrl)}&fileName=${encodeURIComponent(fileName)}`;
-        
+        // 创建一个临时的 a 标签用于下载
         const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = fileName;
+        link.href = `/api/download-image?url=${encodeURIComponent(imageUrl)}&fileName=${encodeURIComponent(fileName)}`;
+        link.download = fileName; // 设置下载文件名
+        link.target = '_blank'; // 在新标签页中打开
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
