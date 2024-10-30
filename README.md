@@ -2,8 +2,19 @@
 
 一个基于 SiliconFlow API 的图片生成 Web 应用，支持多种模型和参数调整，提供直观的用户界面。
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FYOUR_USERNAME%2FYOUR_REPO_NAME)
+
 ![应用截图](screenshots/screenshot.png)
 *支持暗色主题的用户界面，包含完整的参数控制和图片生成功能*
+
+## 部署方式
+
+### Vercel 部署（推荐）
+
+1. 点击上方的 "Deploy with Vercel" 按钮
+2. 授权 Vercel 访问你的 GitHub 账户
+3. 选择要部署的仓库
+4. Vercel 会自动完成部署流程
 
 ## 功能特点
 
