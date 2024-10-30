@@ -80,20 +80,19 @@ async function generateImage() {
             })
         });
 
+        const errorData = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => null);
-            throw new Error(errorData?.error || `HTTP error! status: ${response.status}`);
+            throw new Error(errorData.message || errorData.error || `HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        console.log('Response from server:', data);
+        console.log('Response from server:', errorData);
         
-        if (data.error) {
-            throw new Error(data.error);
+        if (errorData.error) {
+            throw new Error(errorData.message || errorData.error);
         }
 
-        if (data.data && data.data.length > 0) {
-            const imageData = data.data[0];
+        if (errorData.data && errorData.data.length > 0) {
+            const imageData = errorData.data[0];
             const img = document.createElement('img');
             img.src = imageData.url || imageData.image_url;
             img.style.cursor = 'pointer';
@@ -107,7 +106,7 @@ async function generateImage() {
         }
     } catch (error) {
         console.error('Error:', error);
-        showStatus('生成图片时发生错误: ' + error.message, true);
+        showStatus('生成图片时发生错误: ' + (error.message || '未知错误'), true);
     }
 }
 
