@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "framework": "node",
   "routes": [
     {
       "src": "/api/(.*)",
@@ -11,5 +10,10 @@
       "dest": "/public/$1"
     }
   ],
-  "outputDirectory": "public"
+  "outputDirectory": "public",
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs20.x"
+    }
+  }
 } 
