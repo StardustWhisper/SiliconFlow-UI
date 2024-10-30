@@ -2,14 +2,14 @@ name: Docker Image Build and Push CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "master" ]
-    
+    branches: ["main"]
+
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   GITHUB_REPOSITORY: $(echo ${{ github.repository }} | awk -F '/' '{print $2}')
-    
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
