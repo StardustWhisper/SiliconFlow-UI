@@ -1,5 +1,5 @@
 # SiliconFlow AI 助手
-
+![alt text](screenshots/screenshot.png)
 一个基于 SiliconFlow API 的多功能 AI 助手，支持 AI 对话、文生图、图生图和语音转文本等功能。
 
 ## 功能特点
