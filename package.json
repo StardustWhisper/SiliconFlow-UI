@@ -1,21 +1,25 @@
 {
-  "name": "siliconflow-image-generator",
-  "version": "1.0.0",
-  "description": "SiliconFlow Image Generator",
-  "main": "server.js",
+  "name": "siliconflow-ui",
+  "version": "1.2.0",
+  "description": "SiliconFlow AI Assistant UI",
+  "main": "server.prod.js",
   "scripts": {
-    "start": "node server.js",
-    "build": "mkdir -p dist && cp -r public/* dist/ && cp server.js dist/",
-    "serve": "NODE_ENV=production node dist/server.js"
-  },
-  "dependencies": {
-    "express": "^4.17.1",
-    "cors": "^2.8.5",
-    "axios": "^0.21.1",
-    "compression": "^1.7.4",
-    "helmet": "^4.6.0"
+    "start": "node server.prod.js",
+    "dev": "nodemon server.js",
+    "build": "echo 'No build step required'",
+    "vercel-build": "echo 'Vercel build step'"
   },
   "engines": {
-    "node": "18.x"
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "axios": "^1.6.2",
+    "compression": "^1.7.4",
+    "helmet": "^7.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   }
 } 
