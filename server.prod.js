@@ -93,7 +93,16 @@ app.post('/api/generate-image', async (req, res) => {
             config
         );
 
-        res.json(response.data);
+        // 生成文件名
+        const date = new Date().toISOString().split('T')[0];
+        const modelName = model.split('/').pop(); // 提取模型名称的最后一部分
+        const fileName = `${modelName}_GS${guidanceScale}_Steps${inferenceSteps}_Seed${seed}_${date}.png`;
+
+        // 在响应中添加文件名
+        res.json({
+            ...response.data,
+            fileName: fileName
+        });
     } catch (error) {
         console.error('Error:', error.response?.data || error.message);
         res.status(error.response?.status || 500).json({
