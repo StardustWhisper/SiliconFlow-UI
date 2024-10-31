@@ -5,26 +5,29 @@
 ## 功能特点
 
 ### 1. AI 对话
-- 支持与 AI 进行自然语言对话
-- Markdown 格式渲染
+- 支持多种大语言模型选择（包括免费和高级模型）
+- Markdown 格式渲染和语法高亮
 - 支持复制对话内容（纯文本和 Markdown 格式）
-- 代码高亮显示
+- 对话历史记录管理
+- 实时流式响应
+- 平滑滚动和进度指示
 
 ### 2. 文生图
-- 支持多种 AI 模型选择
-- 可调节的图像生成参数
-  - 引导比例（guidance scale）
-  - 推理步数（inference steps）
-  - 图像尺寸
-  - 随机种子
+- 支持多种 AI 模型选择（FLUX、SD等）
+- 丰富的参数调整：
+  - 引导比例（1-20）
+  - 推理步数（1-50）
+  - 自定义分辨率（64-2048）
+  - 随机种子生成
 - 支持正向和负向提示词
+- 生成进度动画显示
 - 一键下载生成的图片
 
 ### 3. 图生图
 - 支持拖拽上传图片
 - 实时图片预览
-- 可调节的变化参数
-  - 变化强度
+- 可调节参数：
+  - 变化强度（0.1-1.0）
   - 引导比例
   - 推理步数
   - 图像尺寸
@@ -34,61 +37,11 @@
 
 ### 4. 语音转文本
 - 支持多种音频格式
-- 支持拖拽上传音频文件
+- 拖拽上传音频文件
 - 音频预览播放
 - 一键复制转换结果
 - 支持多语言识别
 
-## 使用说明
-
-### 1. 系统设置
-- 在设置页面配置您的 SiliconFlow API Key
-- API Key 安全存储在本地浏览器
-- 支持深色/浅色主题切换
-
-### 2. 模型选择
-- AI 对话：支持多种对话模型
-- 文生图：支持 FLUX、SD 等多种模型
-- 图生图：支持 SDXL、SD 等模型
-- 语音转文本：支持 SenseVoice 等模型
-
-### 3. 参数调整
-- 文生图/图生图参数：
-  - 引导比例：1-20
-  - 推理步数：1-50
-  - 多种预设图像尺寸
-  - 随机种子生成
-- 图生图特有参数：
-  - 变化强度：0.1-1.0
-
-## 技术特点
-
-### 1. 前端
-- 纯原生 JavaScript 实现
-- 响应式设计
-- 深色模式支持
-- 拖拽上传
-- 实时预览
-
-### 2. 后端
-- Express.js 服务器
-- API 代理转发
-- 文件处理
-- 错误处理
-- 安全性保护
-
-### 3. 安全性
-- API Key 仅保存在用户本地
-- 支持 HTTPS
-- 启用了必要的安全头部
-- 使用 helmet 增强安全性
-- CORS 保护
-
-### 4. 性能优化
-- 图片压缩和优化
-- Gzip 压缩
-- 静态资源缓存
-- 响应式图片加载
 
 ## 部署说明
 
@@ -178,120 +131,41 @@ services:
 docker-compose up -d
 ```
 
-### 4. 反向代理配置
-
-#### Nginx 配置示例：
-```nginx
-server {
-    listen 80;
-    server_name your-domain.com;
-
-    location / {
-        proxy_pass http://localhost:8080;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-#### Apache 配置示例：
-```apache
-<VirtualHost *:80>
-    ServerName your-domain.com
-    ProxyPreserveHost On
-    ProxyPass / http://localhost:8080/
-    ProxyPassReverse / http://localhost:8080/
-</VirtualHost>
-```
-
-### 5. HTTPS 配置
-
-1. 使用 Let's Encrypt：
-```bash
-# 安装 certbot
-sudo apt-get install certbot python3-certbot-nginx
-
-# 获取证书
-sudo certbot --nginx -d your-domain.com
-```
-
-2. 手动配置 HTTPS：
-```nginx
-server {
-    listen 443 ssl;
-    server_name your-domain.com;
-
-    ssl_certificate /path/to/cert.pem;
-    ssl_certificate_key /path/to/key.pem;
-
-    # ... 其他配置
-}
-```
-
-## 部署注意事项
-
-1. 安全性配置：
-   - 设置适当的 CORS 策略
-   - 配置安全的 HTTP 头部
-   - 启用 HTTPS
-   - 设置访问控制
-
-2. 性能优化：
-   - 启用 Gzip 压缩
-   - 配置缓存策略
-   - 使用 CDN 加速静态资源
-
-3. 监控和日志：
-   - 配置错误日志
-   - 设置性能监控
-   - 配置告警机制
-
-4. 维护建议：
-   - 定期更新依赖
-   - 备份配置文件
-   - 监控系统资源使用
 
 ## 环境要求
 
-- Node.js >= 14.0.0
-- NPM >= 6.0.0
+- Node.js >= 18.0.0
+- NPM >= 8.0.0
 - 现代浏览器支持
+- 支持 WebSocket（用于流式响应）
 
-## 故障排除
+## 使用指南
 
-1. API Key 相关问题
-   - 确保已在设置页面正确配置 API Key
-   - 检查 API Key 是否有效
+### 1. API Key 设置
+- 访问设置页面配置 API Key
+- 按照指引在 SiliconFlow 平台申请
+- 所有功能共用同一个 API Key
 
-2. 图片生成问题
-   - 检查网络接
-   - 确认提示词是否合适
-   - 查看浏览器控制台错误信息
+### 2. 功能使用
+- 对话：选择合适的模型开始对话
+- 文生图：调整参数生成图片
+- 图生图：上传参考图片创作
+- 语音转文本：上传音频文件转换
 
-3. 音频转换问题
-   - 确认音频格式是否支持
-   - 检查文件大小是否超限
+### 3. 历史记录
+- 查看历史对话
+- 继续历史会话
+- 删除单条记录
+- 清空所有记录
 
 ## 更新日志
 
-### v1.0.0
-- 初始版本发布
-- 支持基础对话功能
-- 支持文生图功能
-
-### v1.1.0
-- 添加图生图功能
-- 优化用户界面
-- 添加深色模式
-
-### v1.2.0
-- 添加语音转文本功能
-- 重构设置页面
-- 优化错误处理
-- 改进文档
+### v1.3.0
+- 统一的 API Key 管理
+- 改进的对话历史功能
+- 优化的用户界面
+- 新增进度指示器
+- 改进的错误处理
 
 ## 许可证
 
