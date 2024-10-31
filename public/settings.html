@@ -92,20 +92,51 @@
             border-radius: 8px;
             text-align: center;
             display: none;
+            color: black;
+            font-weight: 500;
         }
 
         .status-message.success {
             background: var(--success-color);
-            color: white;
         }
 
         .status-message.error {
             background: var(--error-color);
-            color: white;
+        }
+
+        .success-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success-color);
+            color: black;
+            font-weight: 500;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 1000;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translate(-50%, -100%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
         }
     </style>
 </head>
 <body>
+    <div id="successMessage" class="success-message">
+        API Key 保存成功！
+    </div>
+
     <div class="container">
         <div class="header">
             <a href="home.html" class="back-button">返回主页</a>
@@ -154,10 +185,23 @@
         function saveApiKey() {
             const apiKey = document.getElementById('apiKey').value.trim();
             const statusMessage = document.getElementById('statusMessage');
+            const successMessage = document.getElementById('successMessage');
 
             if (apiKey) {
                 localStorage.setItem('apiKey', apiKey);
-                showStatus('API Key 已成功保存！', 'success');
+                
+                // 显示成功提示
+                successMessage.style.display = 'block';
+                
+                // 3秒后隐藏提示
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+
+                // 可选：返回主页
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 1500);
             } else {
                 showStatus('请输入有效的 API Key', 'error');
             }
