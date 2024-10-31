@@ -4,8 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SiliconFlow AI 助手</title>
+    <link rel="icon" href="logo/favicon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="logo/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="styles.css">
     <style>
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-grow: 1;
+            justify-content: center;
+        }
+
+        .logo {
+            height: 32px;
+            width: auto;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                height: 24px;
+            }
+        }
+
+
         .header {
             text-align: center;
             margin-bottom: 2rem;
@@ -101,13 +124,33 @@
         .footer-github:hover svg {
             transform: scale(1.1);
         }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            height: 40px;
+            width: auto;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                height: 32px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- 主标题和主题切换 -->
         <div class="header">
-            <h1>SiliconFlow AI 助手</h1>
+            <div class="logo-container">
+                <img src="logo/logo_transparent.png" alt="SiliconFlow Logo" class="logo">
+                <h1>SiliconFlow AI 助手</h1>
+            </div>
             <div class="header-controls">
                 <a href="settings.html" class="settings-button">⚙️ 设置</a>
                 <div class="theme-switch">
