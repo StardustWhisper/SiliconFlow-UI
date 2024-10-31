@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiliconFlow AI 助手</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header-controls {
+            position: absolute;
+            right: 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .settings-button {
+            padding: 0.5rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .settings-button:hover {
+            background: var(--secondary-color);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px var(--shadow-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 主标题和主题切换 -->
+        <div class="header">
+            <h1>SiliconFlow AI 助手</h1>
+            <div class="header-controls">
+                <a href="settings.html" class="settings-button">⚙️ 设置</a>
+                <div class="theme-switch">
+                    <label class="switch">
+                        <input type="checkbox" id="themeToggle">
+                        <span class="slider round">
+                            <span class="moon">🌙</span>
+                            <span class="sun">☀️</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 功能卡片区域 -->
+        <div class="features-grid">
+            <a href="chat.html" class="feature-card">
+                <div class="feature-icon">💬</div>
+                <div class="feature-title">文本对话</div>
+                <div class="feature-description">
+                    与 AI 进行自然语言对话，获取信息、建议和帮助
+                </div>
+            </a>
+
+            <a href="text-to-image.html" class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <div class="feature-title">文生图</div>
+                <div class="feature-description">
+                    通过文字描述生成独特的 AI 艺术作品
+                </div>
+            </a>
+
+            <a href="image-to-image.html" class="feature-card">
+                <div class="feature-icon">🖼️</div>
+                <div class="feature-title">图生图</div>
+                <div class="feature-description">
+                    上传参考图片，创作新的艺术变体
+                </div>
+            </a>
+
+            <a href="speech-to-text.html" class="feature-card">
+                <div class="feature-icon">🎙️</div>
+                <div class="feature-title">语音转文本</div>
+                <div class="feature-description">
+                    将语音内容转换为文字，支持多种语言
+                </div>
+            </a>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('themeToggle');
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            themeToggle.checked = savedTheme === 'dark';
+
+            themeToggle.addEventListener('change', (e) => {
+                const theme = e.target.checked ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            });
+        });
+    </script>
+</body>
+</html> 

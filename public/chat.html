@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiliconFlow AI 对话</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .chat-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            padding: 1rem;
+        }
+
+        .chat-messages {
+            height: 500px;
+            overflow-y: auto;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            border-radius: 8px;
+            max-width: 80%;
+            position: relative;
+        }
+
+        .user-message {
+            background: var(--primary-color);
+            color: white;
+            margin-left: auto;
+        }
+
+        .ai-message {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+        }
+
+        .ai-message pre {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .ai-message code {
+            background: var(--bg-secondary);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .ai-message p {
+            margin: 0.5rem 0;
+        }
+
+        .ai-message ul, .ai-message ol {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .ai-message table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .ai-message th, .ai-message td {
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+        }
+
+        .ai-message blockquote {
+            border-left: 4px solid var(--primary-color);
+            margin: 1rem 0;
+            padding-left: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .ai-message img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .ai-message a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .ai-message a:hover {
+            text-decoration: underline;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            resize: none;
+            min-height: 60px;
+        }
+
+        .send-button {
+            padding: 0.8rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .send-button:hover {
+            background: var(--secondary-color);
+        }
+
+        .model-selector {
+            margin-bottom: 1rem;
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .settings-panel {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .api-key-input {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .copy-buttons {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            display: flex;
+            gap: 5px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .message:hover .copy-buttons {
+            opacity: 1;
+        }
+
+        .copy-button {
+            padding: 4px 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-primary);
+            transition: background-color 0.3s;
+        }
+
+        .copy-button:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .copy-button i {
+            font-size: 14px;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            display: none;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        .copy-button:hover .tooltip {
+            display: block;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .back-button {
+            position: absolute;
+            left: 0;
+            padding: 0.5rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .back-button:hover {
+            background: var(--secondary-color);
+        }
+
+        .theme-switch {
+            position: absolute;
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 主标题和主题切换 -->
+        <div class="header">
+            <a href="home.html" class="back-button">返回主页</a>
+            <h1>SiliconFlow AI 对话</h1>
+            <div class="theme-switch">
+                <label class="switch">
+                    <input type="checkbox" id="themeToggle">
+                    <span class="slider round">
+                        <span class="moon">🌙</span>
+                        <span class="sun">☀️</span>
+                    </span>
+                </label>
+            </div>
+        </div>
+
+        <div class="chat-container">
+            <!-- 设置面板 -->
+            <div class="settings-panel">
+                <select id="modelSelect" class="model-selector">
+                    <!-- 免费模型 -->
+                    <optgroup label="免费模型">
+                        <option value="Qwen/Qwen2.5-7B-Instruct">Qwen2.5-7B-Instruct (Free)</option>
+                        <option value="Qwen/Qwen2.5-Coder-7B-Instruct">Qwen2.5-Coder-7B-Instruct (Free)</option>
+                        <option value="Qwen/Qwen2-7B-Instruct">Qwen2-7B-Instruct (Free)</option>
+                        <option value="01-ai/Yi-1.5-9B-Chat-16K">Yi-1.5-9B-Chat-16K (Free)</option>
+                        <option value="01-ai/Yi-1.5-6B-Chat">Yi-1.5-6B-Chat (Free)</option>
+                        <option value="THUDM/chatglm3-6b">chatglm3-6b (Free)</option>
+                        <option value="THUDM/glm-4-9b-chat">glm-4-9b-chat (Free)</option>
+                        <option value="internlm/internlm2_5-7b-chat">InternLM2.5-7B-Chat (Free)</option>
+                    </optgroup>
+
+                    <!-- 大型模型 -->
+                    <optgroup label="大型模型">
+                        <option value="Qwen/Qwen2.5-72B-Instruct">Qwen2.5-72B</option>
+                        <option value="Qwen/Qwen2.5-32B-Instruct">Qwen2.5-32B</option>
+                        <option value="Qwen/Qwen2.5-14B-Instruct">Qwen2.5-14B</option>
+                        <option value="Qwen/Qwen2-72B-Instruct">Qwen2-72B</option>
+                        <option value="internlm/internlm2_5-20b-chat">InternLM2-20B</option>
+                        <option value="meta-llama/Meta-Llama-3.1-70B-Instruct">Llama3.1-70B</option>
+                        <option value="meta-llama/Meta-Llama-3-70B-Instruct">Llama3-70B</option>
+                        <option value="google/gemma-2-27b-it">Gemma-2-27B</option>
+                        <option value="deepseek-ai/DeepSeek-V2-Chat">DeepSeek-V2-Chat</option>
+                        <option value="deepseek-ai/DeepSeek-Coder-V2-Instruct">DeepSeek-Coder-V2</option>
+                        <option value="deepseek-ai/DeepSeek-V2.5">DeepSeek-V2.5</option>
+                        <option value="Qwen/Qwen2-1.5B-Instruct">Qwen2-1.5B</option>
+                        <option value="01-ai/Yi-1.5-34B-Chat-16K">Yi-1.5-34B</option>
+                        <option value="meta-llama/Meta-Llama-3-8B-Instruct">Llama3-8B</option>
+                        <option value="google/gemma-2-9b-it">Gemma-2-9B</option>
+                    </optgroup>
+
+                    <!-- 专业版模型 -->
+                    <optgroup label="专业版模型">
+                        <option value="Pro/Qwen/Qwen2.5-7B-Instruct">Pro-Qwen2.5-7B</option>
+                        <option value="Pro/Qwen/Qwen2-7B-Instruct">Pro-Qwen2-7B</option>
+                        <option value="Pro/01-ai/Yi-1.5-9B-Chat-16K">Pro-Yi-1.5-9B</option>
+                        <option value="Pro/01-ai/Yi-1.5-6B-Chat">Pro-Yi-1.5-6B</option>
+                        <option value="Pro/THUDM/chatglm3-6b">Pro-ChatGLM3-6B</option>
+                        <option value="Pro/THUDM/glm-4-9b-chat">Pro-GLM-4-9B</option>
+                        <option value="Pro/internlm/internlm2_5-7b-chat">Pro-InternLM2-7B</option>
+                        <option value="Pro/meta-llama/Meta-Llama-3-8B-Instruct">Pro-Llama3-8B</option>
+                        <option value="Pro/meta-llama/Meta-Llama-3.1-8B-Instruct">Pro-Llama3.1-8B</option>
+                        <option value="Pro/google/gemma-2-9b-it">Pro-Gemma-2-9B</option>
+                        <option value="Pro/Qwen/Qwen2-VL-7B-Instruct">Pro-Qwen2-VL-7B</option>
+                        <option value="Pro/OpenGVLab/InternVL2-8B">Pro-InternVL2-8B</option>
+                    </optgroup>
+
+                    <!-- 多模态模型 -->
+                    <optgroup label="多模态模型">
+                        <option value="Qwen/Qwen2-VL-72B-Instruct">Qwen2-VL-72B</option>
+                        <option value="OpenGVLab/InternVL2-Llama3-76B">InternVL2-76B</option>
+                        <option value="OpenGVLab/InternVL2-26B">InternVL2-26B</option>
+                    </optgroup>
+
+                    <!-- 特殊模型 -->
+                    <optgroup label="特殊模型">
+                        <option value="Qwen/Qwen2.5-Math-72B-Instruct">Qwen2.5-Math-72B</option>
+                        <option value="TeleAI/TeleChat2">TeleChat2</option>
+                        <option value="Vendor-A/Qwen/Qwen2-72B-Instruct">Vendor-A-Qwen2-72B</option>
+                        <option value="Vendor-A/Qwen/Qwen2.5-72B-Instruct">Vendor-A-Qwen2.5-72B</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <!-- 聊天消息区域 -->
+            <div class="chat-messages" id="chatMessages"></div>
+
+            <!-- 输入区域 -->
+            <div class="input-container">
+                <textarea 
+                    id="messageInput" 
+                    class="chat-input" 
+                    placeholder="输入消息..."
+                    onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }">
+                </textarea>
+                <button onclick="sendMessage()" class="send-button">发送</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 主题切换功能
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('themeToggle');
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            themeToggle.checked = savedTheme === 'dark';
+
+            themeToggle.addEventListener('change', (e) => {
+                const theme = e.target.checked ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            });
+        });
+
+        // 配置 marked 选项
+        marked.setOptions({
+            breaks: true,        // 支持 GitHub 风格的换行
+            gfm: true,          // 启用 GitHub 风格的 Markdown
+            headerIds: false,    // 禁用标题 ID
+            mangle: false,      // 禁用标题 ID 转义
+            sanitize: false,    // 允许 HTML 标签
+            highlight: function(code, lang) {
+                // 如果需要代码高亮，可以在这里集成 highlight.js 等库
+                return code;
+            }
+        });
+
+        async function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const chatMessages = document.getElementById('chatMessages');
+            const apiKey = localStorage.getItem('apiKey');
+            const model = document.getElementById('modelSelect').value;
+            const message = messageInput.value.trim();
+
+            if (!message) {
+                alert('请输入消息');
+                return;
+            }
+
+            if (!apiKey) {
+                alert('请先在主页设置 API Key');
+                window.location.href = 'home.html';
+                return;
+            }
+
+            // 添加用户消息
+            appendMessage(message, 'user');
+            messageInput.value = '';
+
+            try {
+                const response = await fetch('https://api.siliconflow.cn/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: [{ role: 'user', content: message }],
+                        stream: true
+                    })
+                });
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let aiMessage = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n');
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+                            try {
+                                const data = JSON.parse(line.slice(6));
+                                const content = data.choices[0].delta.content || '';
+                                aiMessage += content;
+                                // 实时解析并显示 Markdown
+                                updateAIMessage(aiMessage);
+                            } catch (e) {
+                                console.error('Error parsing chunk:', e);
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                appendMessage('发生错误: ' + error.message, 'error');
+            }
+        }
+
+        function appendMessage(content, type) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            
+            if (type === 'user') {
+                messageDiv.textContent = content;
+                const copyButtons = createCopyButtons(content);
+                messageDiv.appendChild(copyButtons);
+            } else if (type === 'ai') {
+                messageDiv.innerHTML = marked.parse(content);
+                const copyButtons = createCopyButtons(content, true);
+                messageDiv.appendChild(copyButtons);
+            } else {
+                messageDiv.textContent = content;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function updateAIMessage(content) {
+            const chatMessages = document.getElementById('chatMessages');
+            let aiMessage = chatMessages.querySelector('.ai-message:last-child');
+            
+            if (!aiMessage) {
+                aiMessage = document.createElement('div');
+                aiMessage.className = 'message ai-message';
+                chatMessages.appendChild(aiMessage);
+            }
+            
+            // 使用 marked 解析 Markdown
+            aiMessage.innerHTML = marked.parse(content);
+            
+            let copyButtons = aiMessage.querySelector('.copy-buttons');
+            if (copyButtons) {
+                copyButtons.remove();
+            }
+            copyButtons = createCopyButtons(content, true);
+            aiMessage.appendChild(copyButtons);
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function createCopyButtons(content, isMarkdown = false) {
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.className = 'copy-buttons';
+
+            // 复制纯文本按钮
+            const copyTextButton = document.createElement('button');
+            copyTextButton.className = 'copy-button';
+            copyTextButton.innerHTML = '📋 <span class="tooltip">复制纯文本</span>';
+            copyTextButton.onclick = (e) => {
+                e.stopPropagation();
+                const textContent = stripMarkdown(content);
+                copyToClipboard(textContent);
+                showCopyTooltip(copyTextButton, '已复制纯文本！');
+            };
+
+            // 复制 Markdown 按钮
+            const copyMarkdownButton = document.createElement('button');
+            copyMarkdownButton.className = 'copy-button';
+            copyMarkdownButton.innerHTML = '📝 <span class="tooltip">复制 Markdown</span>';
+            copyMarkdownButton.onclick = (e) => {
+                e.stopPropagation();
+                copyToClipboard(content);
+                showCopyTooltip(copyMarkdownButton, '已复制 Markdown！');
+            };
+
+            buttonsContainer.appendChild(copyTextButton);
+            buttonsContainer.appendChild(copyMarkdownButton);
+            return buttonsContainer;
+        }
+
+        function stripMarkdown(text) {
+            // 更彻底地移除 Markdown 语法
+            return text
+                .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')           // 链接
+                .replace(/[*_~`]/g, '')                            // 强调语法
+                .replace(/^#+\s*/gm, '')                           // 标题
+                .replace(/^\s*[-*+]\s+/gm, '')                     // 无序列表
+                .replace(/^\s*\d+\.\s+/gm, '')                     // 有序列表
+                .replace(/^\s*>/gm, '')                            // 引用
+                .replace(/`{3}[\s\S]*?`{3}/gm, '')                // 代码块
+                .replace(/`([^`]+)`/g, '$1')                       // 行内代码
+                .replace(/\|[^\n]+\|/g, '')                        // 表格
+                .replace(/^[-=]{3,}/gm, '')                        // 分隔线
+                .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')         // 图片
+                .replace(/\n{2,}/g, '\n\n')                        // 多余的换行
+                .replace(/\[([\sx])\]/g, '')                       // 任务列表
+                .replace(/~~([^~]+)~~/g, '$1')                     // 删除线
+                .replace(/<[^>]+>/g, '')                           // HTML 标签
+                .trim();
+        }
+
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch (err) {
+                console.error('复制失败:', err);
+                // 降级方案
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
+        }
+
+        function showCopyTooltip(button, message) {
+            const tooltip = button.querySelector('.tooltip');
+            const originalText = tooltip.textContent;
+            tooltip.textContent = message;
+            tooltip.style.display = 'block';
+            
+            setTimeout(() => {
+                tooltip.textContent = originalText;
+                tooltip.style.display = 'none';
+            }, 1500);
+        }
+    </script>
+</body>
+</html> 

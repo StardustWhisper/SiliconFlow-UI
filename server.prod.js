@@ -27,6 +27,31 @@ app.use(express.json());
 // 静态文件服务
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 添加路由处理
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'home.html'));
+});
+
+app.get('/home', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'home.html'));
+});
+
+app.get('/text-to-image', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'text-to-image.html'));
+});
+
+app.get('/chat', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'chat.html'));
+});
+
+app.get('/image-to-image', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'image-to-image.html'));
+});
+
+app.get('/speech-to-text', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'speech-to-text.html'));
+});
+
 // API 路由
 app.post('/api/generate-image', async (req, res) => {
     try {
@@ -116,7 +141,7 @@ app.use((err, req, res, next) => {
 
 // 处理所有其他路由，返回主页
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.redirect('/');
 });
 
 const PORT = process.env.PORT || 8080;
