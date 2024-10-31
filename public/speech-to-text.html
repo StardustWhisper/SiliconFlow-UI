@@ -39,12 +39,28 @@
         }
 
         .main-content {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
             background: var(--card-bg);
             border-radius: 12px;
             box-shadow: 0 4px 6px var(--shadow-color);
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+        }
+
+        .controls-panel {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .result-panel {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            min-height: 400px;
         }
 
         .upload-area {
@@ -167,6 +183,12 @@
             border-radius: 4px;
             display: none;
         }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -186,24 +208,23 @@
         </div>
 
         <div class="main-content">
-            <!-- 模型选择 -->
-            <select id="model" class="model-selector">
-                <option value="FunAudioLLM/SenseVoiceSmall">SenseVoice Small</option>
-            </select>
-
-            <!-- 音频上传区域 -->
-            <div id="uploadArea" class="upload-area">
-                <p>点击或拖拽音频文件到此处上传</p>
-                <input type="file" id="audioInput" accept="audio/*" style="display: none">
-                <audio id="audioPreview" controls style="display: none; width: 100%; margin-top: 1rem;"></audio>
+            <div class="controls-panel">
+                <select id="model" class="model-selector">
+                    <option value="FunAudioLLM/SenseVoiceSmall">SenseVoice Small</option>
+                </select>
+                <div id="uploadArea" class="upload-area">
+                    <p>点击或拖拽音频文件到此处上传</p>
+                    <input type="file" id="audioInput" accept="audio/*" style="display: none">
+                    <audio id="audioPreview" controls style="display: none; width: 100%; margin-top: 1rem;"></audio>
+                </div>
+                <button id="convertButton" class="convert-button" disabled>转换为文本</button>
             </div>
 
-            <button id="convertButton" class="convert-button" disabled>转换为文本</button>
-            <div id="status" class="status"></div>
-
-            <!-- 结果显示区域 -->
-            <div id="resultContainer" class="result-container" style="display: none;">
-                <div id="resultText" class="result-text"></div>
+            <div class="result-panel">
+                <div id="status" class="status"></div>
+                <div id="resultContainer" class="result-container" style="display: none;">
+                    <div id="resultText" class="result-text"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -268,8 +289,8 @@
         convertButton.addEventListener('click', async () => {
             const apiKey = localStorage.getItem('apiKey');
             if (!apiKey) {
-                alert('请先在主页设置 API Key');
-                window.location.href = 'home.html';
+                alert('请先设置 API Key');
+                window.location.href = 'settings.html';
                 return;
             }
 

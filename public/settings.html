@@ -130,6 +130,51 @@
                 opacity: 1;
             }
         }
+
+        .api-key-guide {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .api-key-guide h3 {
+            margin: 0 0 1rem 0;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+        }
+
+        .api-key-guide p {
+            margin: 0.5rem 0;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .api-key-guide a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .api-key-guide a:hover {
+            text-decoration: underline;
+        }
+
+        .api-key-guide ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .api-key-guide li {
+            margin-bottom: 0.5rem;
+        }
+
+        .api-key-guide li:last-child {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 <body>
@@ -158,6 +203,20 @@
                 <input type="text" id="apiKey" class="api-key-input" placeholder="请输入您的 API Key">
                 <button onclick="saveApiKey()" class="save-button">保存</button>
                 <div id="statusMessage" class="status-message"></div>
+
+                <div class="api-key-guide">
+                    <h3>如何获取 API Key</h3>
+                    <p>要在SiliconFlow上申请API Key，您可以按照以下步骤进行操作：</p>
+                    <p><a href="https://siliconflow.cn/zh-cn/" target="_blank" rel="noopener noreferrer">访问 SiliconFlow 官网</a></p>
+                    <ol>
+                        <li>注册SiliconCloud账户：首先，您需要访问SiliconCloud平台并注册一个账户。</li>
+                        <li>登录账户：完成注册后，使用您的账户信息登录到SiliconCloud。</li>
+                        <li>访问API密钥管理页面：登录后，前往API密钥管理页面。在这里，您将看到创建新API密钥的选项。</li>
+                        <li>创建API密钥：点击"创建新API密钥"按钮，并按照提示填写相关信息。</li>
+                        <li>复制API密钥：创建成功后，系统会生成一个API密钥。请务必将其复制并妥善保存，以备后续使用。</li>
+                        <li>配置API密钥：在您的应用或服务中，使用此API密钥进行身份验证和调用SiliconCloud的服务。</li>
+                    </ol>
+                </div>
             </div>
         </div>
     </div>

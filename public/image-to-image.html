@@ -7,12 +7,30 @@
     <link rel="stylesheet" href="styles.css">
     <style>
         .image-upload-container {
+            max-width: 1200px;
             margin: 2rem auto;
-            max-width: 800px;
             padding: 2rem;
             background: var(--card-bg);
             border-radius: 12px;
             box-shadow: 0 4px 6px var(--shadow-color);
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+        }
+
+        .settings-panel {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .image-panel {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .upload-area {
@@ -43,9 +61,8 @@
 
         .settings-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: 1fr;
             gap: 1rem;
-            margin: 1rem 0;
         }
 
         .control-group {
@@ -162,6 +179,12 @@
         input[type="range"]::-webkit-slider-thumb:hover {
             background: var(--secondary-color);
         }
+
+        @media (max-width: 1024px) {
+            .image-upload-container {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -182,92 +205,82 @@
         </div>
 
         <div class="image-upload-container">
-            <!-- 移除 API Key 输入部分 -->
+            <div class="settings-panel">
+                <!-- 设置选项 -->
+                <div class="settings-grid">
+                    <div class="control-group">
+                        <label for="model">模型选择</label>
+                        <select id="model">
+                            <option value="stabilityai/stable-diffusion-xl-base-1.0">SD XL 1.0</option>
+                            <option value="stabilityai/stable-diffusion-2-1">SD 2.1</option>
+                        </select>
+                    </div>
 
-            <!-- 图片上传区域 -->
-            <div id="uploadArea" class="upload-area">
-                <p>点击或拖拽图片到此处上传</p>
-                <input type="file" id="imageInput" accept="image/*" style="display: none">
-                <img id="previewImage" class="preview-image" style="display: none">
+                    <div class="control-group">
+                        <label for="prompt">提示词</label>
+                        <input type="text" id="prompt" placeholder="描述您想要的图片效果">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="negativePrompt">负面提示词</label>
+                        <input type="text" id="negativePrompt" placeholder="描述您不想要的元素">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="strength">变化强度 (0.1-1.0)</label>
+                        <div class="slider-container">
+                            <input type="range" id="strength" min="0.1" max="1.0" step="0.1" value="0.75">
+                            <span id="strengthValue">0.75</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="guidanceScale">引导比例 (1-20)</label>
+                        <div class="slider-container">
+                            <input type="range" id="guidanceScale" min="1" max="20" step="0.5" value="7.5">
+                            <span id="guidanceScaleValue">7.5</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="inferenceSteps">推理步数 (1-50)</label>
+                        <div class="slider-container">
+                            <input type="range" id="inferenceSteps" min="1" max="50" step="1" value="20">
+                            <span id="inferenceStepsValue">20</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="seed">Seed</label>
+                        <div class="seed-container">
+                            <input type="number" id="seed" value="0" min="0">
+                            <button onclick="generateRandomSeed()" class="random-seed-button" title="生成随机种子">🎲</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="imageSize">输出尺寸</label>
+                        <select id="imageSize">
+                            <option value="1024x1024">1024x1024</option>
+                            <option value="512x1024">512x1024</option>
+                            <option value="768x512">768x512</option>
+                            <option value="768x1024">768x1024</option>
+                            <option value="1024x576">1024x576</option>
+                            <option value="576x1024">576x1024</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="generateButton" class="generate-button" disabled>生成图片</button>
             </div>
 
-            <!-- 设置区域 -->
-            <div class="settings-grid">
-                <div class="control-group">
-                    <label for="model">模型选择</label>
-                    <select id="model">
-                        <option value="black-forest-labs/FLUX.1-schnell">FLUX.1-schnell（推荐）</option>
-                        <option value="stabilityai/stable-diffusion-3-5-large">SD 3.5 Large</option>
-                        <option value="stabilityai/stable-diffusion-3-medium">SD 3.5 Medium</option>
-                        <option value="stabilityai/stable-diffusion-xl-base-1.0">SD XL 1.0</option>
-                        <option value="stabilityai/stable-diffusion-2-1">SD 2.1</option>
-                        <option value="stabilityai/sd-turbo">SD Turbo</option>
-                        <option value="stabilityai/sdxl-turbo">SDXL Turbo</option>
-                        <option value="ByteDance/SDXL-Lightning">SDXL Lightning</option>
-                        <option value="InstantX/InstantID">InstantID</option>
-                        <option value="TencentARC/PhotoMaker">PhotoMaker</option>
-                    </select>
+            <div class="image-panel">
+                <div id="uploadArea" class="upload-area">
+                    <p>点击或拖拽图片到此处上传</p>
+                    <input type="file" id="imageInput" accept="image/*" style="display: none">
+                    <img id="previewImage" class="preview-image" style="display: none">
                 </div>
-
-                <div class="control-group">
-                    <label for="prompt">提示词</label>
-                    <input type="text" id="prompt" placeholder="描述您想要的图片效果">
-                </div>
-
-                <div class="control-group">
-                    <label for="negativePrompt">负面提示词</label>
-                    <input type="text" id="negativePrompt" placeholder="描述您不想要的元素">
-                </div>
-
-                <div class="control-group">
-                    <label for="strength">变化强度 (0.1-1.0)</label>
-                    <div class="slider-container">
-                        <input type="range" id="strength" min="0.1" max="1.0" step="0.1" value="0.75">
-                        <span id="strengthValue">0.75</span>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label for="guidanceScale">引导比例 (1-20)</label>
-                    <div class="slider-container">
-                        <input type="range" id="guidanceScale" min="1" max="20" step="0.5" value="7.5">
-                        <span id="guidanceScaleValue">7.5</span>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label for="inferenceSteps">推理步数 (1-50)</label>
-                    <div class="slider-container">
-                        <input type="range" id="inferenceSteps" min="1" max="50" step="1" value="20">
-                        <span id="inferenceStepsValue">20</span>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label for="seed">Seed</label>
-                    <div class="seed-container">
-                        <input type="number" id="seed" value="0" min="0">
-                        <button onclick="generateRandomSeed()" class="random-seed-button" title="生成随机种子">🎲</button>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label for="imageSize">输出尺寸</label>
-                    <select id="imageSize">
-                        <option value="1024x1024">1024x1024</option>
-                        <option value="512x1024">512x1024</option>
-                        <option value="768x512">768x512</option>
-                        <option value="768x1024">768x1024</option>
-                        <option value="1024x576">1024x576</option>
-                        <option value="576x1024">576x1024</option>
-                    </select>
-                </div>
+                <div id="outputContainer" class="output-container"></div>
             </div>
-
-            <button id="generateButton" class="generate-button" disabled>生成图片</button>
-
-            <!-- 生成的图片显示区域 -->
-            <div id="outputContainer" style="margin-top: 2rem; text-align: center;"></div>
         </div>
     </div>
 
@@ -359,16 +372,16 @@
         // 图片生成
         generateButton.addEventListener('click', async () => {
             const apiKey = localStorage.getItem('apiKey');
+            if (!apiKey) {
+                alert('请先设置 API Key');
+                window.location.href = 'settings.html';
+                return;
+            }
+
             const model = document.getElementById('model').value;
             const prompt = document.getElementById('prompt').value;
             const negativePrompt = document.getElementById('negativePrompt').value;
             const strength = document.getElementById('strength').value;
-
-            if (!apiKey) {
-                alert('请先在主页设置 API Key');
-                window.location.href = 'home.html';
-                return;
-            }
 
             if (!previewImage.src) {
                 alert('请先上传图片');

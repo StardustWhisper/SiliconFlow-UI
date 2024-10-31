@@ -8,29 +8,75 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         .chat-container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 2rem auto;
             background: var(--card-bg);
             border-radius: 12px;
             box-shadow: 0 4px 6px var(--shadow-color);
             padding: 1rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 1rem;
+            height: calc(100vh - 150px);
+        }
+
+        .settings-panel {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-area {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .chat-messages {
-            height: 500px;
-            overflow-y: auto;
+            flex: 1;
+            overflow-y: scroll;
             padding: 1rem;
             margin-bottom: 1rem;
             border-radius: 8px;
             background: var(--bg-secondary);
+            height: calc(100vh - 300px);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            scroll-behavior: smooth;
+        }
+
+        .messages-container {
+            display: flex;
+            flex-direction: column;
+            min-height: min-content;
+            margin-top: auto;
+            padding-right: 0.5rem;
         }
 
         .message {
             margin-bottom: 1rem;
-            padding: 0.8rem;
+            padding: 1rem;
             border-radius: 8px;
-            max-width: 80%;
+            max-width: 85%;
             position: relative;
+            word-wrap: break-word;
+            opacity: 0;
+            animation: fadeInUp 0.3s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .user-message {
@@ -42,7 +88,96 @@
         .ai-message {
             background: var(--bg-primary);
             border: 1px solid var(--border-color);
+        }
+
+        .input-container {
+            background: var(--bg-primary);
+            border-radius: 8px;
             padding: 1rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            position: sticky;
+            bottom: 0;
+            margin-top: auto;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            resize: none;
+            min-height: 60px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .send-button {
+            padding: 0.8rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            height: 60px;
+            white-space: nowrap;
+        }
+
+        .model-selector {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 1024px) {
+            .chat-container {
+                grid-template-columns: 1fr;
+                height: calc(100vh - 100px);
+            }
+
+            .settings-panel {
+                max-height: 200px;
+                overflow-y: auto;
+            }
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
+            opacity: 0.5;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 6px;
+            height: 0;
+            background: var(--primary-color);
+            opacity: 0.5;
+            transition: height 0.1s ease;
+            border-radius: 3px;
         }
 
         .ai-message pre {
@@ -98,66 +233,6 @@
 
         .ai-message a:hover {
             text-decoration: underline;
-        }
-
-        .input-container {
-            display: flex;
-            gap: 1rem;
-            padding: 1rem;
-            background: var(--bg-primary);
-            border-radius: 8px;
-        }
-
-        .chat-input {
-            flex: 1;
-            padding: 0.8rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            resize: none;
-            min-height: 60px;
-        }
-
-        .send-button {
-            padding: 0.8rem 1.5rem;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .send-button:hover {
-            background: var(--secondary-color);
-        }
-
-        .model-selector {
-            margin-bottom: 1rem;
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-        }
-
-        .settings-panel {
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-        }
-
-        .api-key-input {
-            width: 100%;
-            padding: 0.8rem;
-            margin-bottom: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
         }
 
         .copy-buttons {
@@ -251,11 +326,117 @@
             position: absolute;
             right: 0;
         }
+
+        .chat-history {
+            margin-top: 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .history-header h3 {
+            margin: 0;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .clear-history-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.2rem 0.5rem;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            transition: color 0.3s;
+        }
+
+        .clear-history-btn:hover {
+            color: var(--error-color);
+        }
+
+        .history-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .history-item {
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .history-item .delete-btn {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 0.2rem 0.5rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s, color 0.3s;
+        }
+
+        .history-item:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .history-item .delete-btn:hover {
+            color: var(--error-color);
+        }
+
+        .history-item .content {
+            flex: 1;
+            margin-right: 2rem;
+            overflow: hidden;
+        }
+
+        .history-item .preview {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-item:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .history-item .time {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .history-item:hover .time {
+            color: rgba(255, 255, 255, 0.8);
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 主标题和主题切换 -->
+        <!-- 主标题和主切换 -->
         <div class="header">
             <a href="home.html" class="back-button">返回主页</a>
             <h1>SiliconFlow AI 对话</h1>
@@ -271,7 +452,6 @@
         </div>
 
         <div class="chat-container">
-            <!-- 设置面板 -->
             <div class="settings-panel">
                 <select id="modelSelect" class="model-selector">
                     <!-- 免费模型 -->
@@ -322,7 +502,7 @@
                     </optgroup>
 
                     <!-- 多模态模型 -->
-                    <optgroup label="多模态模型">
+                    <optgroup label="多模态��型">
                         <option value="Qwen/Qwen2-VL-72B-Instruct">Qwen2-VL-72B</option>
                         <option value="OpenGVLab/InternVL2-Llama3-76B">InternVL2-76B</option>
                         <option value="OpenGVLab/InternVL2-26B">InternVL2-26B</option>
@@ -336,20 +516,30 @@
                         <option value="Vendor-A/Qwen/Qwen2.5-72B-Instruct">Vendor-A-Qwen2.5-72B</option>
                     </optgroup>
                 </select>
+
+                <!-- 添加聊天历史记录部分 -->
+                <div class="chat-history">
+                    <div class="history-header">
+                        <h3>聊天记录</h3>
+                        <button onclick="clearHistory()" class="clear-history-btn" title="清空历史记录">🗑️</button>
+                    </div>
+                    <div id="historyList" class="history-list"></div>
+                </div>
             </div>
 
-            <!-- 聊天消息区域 -->
-            <div class="chat-messages" id="chatMessages"></div>
-
-            <!-- 输入区域 -->
-            <div class="input-container">
-                <textarea 
-                    id="messageInput" 
-                    class="chat-input" 
-                    placeholder="输入消息..."
-                    onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }">
-                </textarea>
-                <button onclick="sendMessage()" class="send-button">发送</button>
+            <div class="chat-area">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="scroll-indicator" id="scrollIndicator"></div>
+                    <div class="messages-container" id="messagesContainer"></div>
+                </div>
+                <div class="input-container">
+                    <textarea 
+                        id="messageInput" 
+                        class="chat-input" 
+                        placeholder="输入消息..."
+                        onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }"></textarea>
+                    <button onclick="sendMessage()" class="send-button">发送</button>
+                </div>
             </div>
         </div>
     </div>
@@ -382,6 +572,11 @@
             }
         });
 
+        // 添加会话ID和消息数组
+        let currentSessionId = Date.now();
+        let currentMessages = [];
+
+        // 修改发送消息函数
         async function sendMessage() {
             const messageInput = document.getElementById('messageInput');
             const chatMessages = document.getElementById('chatMessages');
@@ -395,12 +590,18 @@
             }
 
             if (!apiKey) {
-                alert('请先在主页设置 API Key');
-                window.location.href = 'home.html';
+                alert('请先设置 API Key');
+                window.location.href = 'settings.html';
                 return;
             }
 
-            // 添加用户消息
+            // 添加用户消息到当前会话
+            currentMessages.push({
+                role: 'user',
+                content: message
+            });
+
+            // 添加用户消息到显示
             appendMessage(message, 'user');
             messageInput.value = '';
 
@@ -413,7 +614,7 @@
                     },
                     body: JSON.stringify({
                         model: model,
-                        messages: [{ role: 'user', content: message }],
+                        messages: currentMessages,  // 发送完整的对话历史
                         stream: true
                     })
                 });
@@ -435,7 +636,6 @@
                                 const data = JSON.parse(line.slice(6));
                                 const content = data.choices[0].delta.content || '';
                                 aiMessage += content;
-                                // 实时解析并显示 Markdown
                                 updateAIMessage(aiMessage);
                             } catch (e) {
                                 console.error('Error parsing chunk:', e);
@@ -443,14 +643,56 @@
                         }
                     }
                 }
+
+                // 添加AI回复到当前会话
+                currentMessages.push({
+                    role: 'assistant',
+                    content: aiMessage
+                });
+
+                // 保存或更新对话记录
+                saveHistory(message, aiMessage);
+                updateHistoryList();
+
             } catch (error) {
                 console.error('Error:', error);
                 appendMessage('发生错误: ' + error.message, 'error');
             }
         }
 
-        function appendMessage(content, type) {
+        // 添加滚动进度指示器更新函数
+        function updateScrollIndicator() {
             const chatMessages = document.getElementById('chatMessages');
+            const indicator = document.getElementById('scrollIndicator');
+            
+            const scrollPercent = (chatMessages.scrollTop / (chatMessages.scrollHeight - chatMessages.clientHeight)) * 100;
+            indicator.style.height = `${scrollPercent}%`;
+        }
+
+        // 修改滚动函数
+        function scrollToBottom(smooth = true) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messagesContainer = document.getElementById('messagesContainer');
+            
+            const scrollHeight = messagesContainer.scrollHeight;
+            const clientHeight = chatMessages.clientHeight;
+            const maxScroll = scrollHeight - clientHeight;
+            
+            if (smooth) {
+                chatMessages.scrollTo({
+                    top: maxScroll,
+                    behavior: 'smooth'
+                });
+            } else {
+                chatMessages.scrollTop = maxScroll;
+            }
+            
+            updateScrollIndicator();
+        }
+
+        // 修改消息追加函数
+        function appendMessage(content, type) {
+            const messagesContainer = document.getElementById('messagesContainer');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${type}-message`;
             
@@ -466,21 +708,22 @@
                 messageDiv.textContent = content;
             }
             
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            messagesContainer.appendChild(messageDiv);
+            scrollToBottom(true);
+            updateScrollIndicator();
         }
 
+        // 修改 AI 消息更新函数
         function updateAIMessage(content) {
-            const chatMessages = document.getElementById('chatMessages');
-            let aiMessage = chatMessages.querySelector('.ai-message:last-child');
+            const messagesContainer = document.getElementById('messagesContainer');
+            let aiMessage = messagesContainer.querySelector('.ai-message:last-child');
             
             if (!aiMessage) {
                 aiMessage = document.createElement('div');
                 aiMessage.className = 'message ai-message';
-                chatMessages.appendChild(aiMessage);
+                messagesContainer.appendChild(aiMessage);
             }
             
-            // 使用 marked 解析 Markdown
             aiMessage.innerHTML = marked.parse(content);
             
             let copyButtons = aiMessage.querySelector('.copy-buttons');
@@ -490,7 +733,7 @@
             copyButtons = createCopyButtons(content, true);
             aiMessage.appendChild(copyButtons);
             
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            scrollToBottom(false);
         }
 
         function createCopyButtons(content, isMarkdown = false) {
@@ -570,6 +813,145 @@
                 tooltip.style.display = 'none';
             }, 1500);
         }
+
+        // 修改保存历史记录函数
+        function saveHistory(userMessage, aiMessage) {
+            const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+            
+            // 检查是否已存在相同的会话ID
+            const existingIndex = history.findIndex(item => item.id === currentSessionId);
+            
+            const historyItem = {
+                id: currentSessionId,
+                time: new Date().toISOString(),
+                messages: currentMessages,
+                preview: userMessage.substring(0, 30) + (userMessage.length > 30 ? '...' : '')
+            };
+
+            if (existingIndex !== -1) {
+                // 更新现有会话
+                history[existingIndex] = historyItem;
+            } else {
+                // 添加新会话
+                history.unshift(historyItem);
+                // 只保留最近的20条记录
+                if (history.length > 20) {
+                    history.pop();
+                }
+            }
+            
+            localStorage.setItem('chatHistory', JSON.stringify(history));
+        }
+
+        // 修改显示历史对话函数
+        function showHistoryChat(encodedItem) {
+            const item = JSON.parse(decodeURIComponent(encodedItem));
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.innerHTML = '';
+            
+            // 更新当前会话ID和消息
+            currentSessionId = item.id;
+            currentMessages = [...item.messages];
+            
+            // 显示所有消息
+            item.messages.forEach(msg => {
+                appendMessage(msg.content, msg.role === 'user' ? 'user' : 'ai');
+            });
+
+            scrollToBottom(false);  // 加载历史记录时使用即时滚动
+        }
+
+        // 修改删除历史记录函数
+        function deleteHistoryItem(id) {
+            if (confirm('确定要删除这条对话记录吗？')) {
+                const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+                const newHistory = history.filter(item => item.id !== id);
+                localStorage.setItem('chatHistory', JSON.stringify(newHistory));
+                
+                // 如果删除的是当前会话，清空聊天区域
+                if (id === currentSessionId) {
+                    const messagesContainer = document.getElementById('messagesContainer');
+                    messagesContainer.innerHTML = '';
+                    currentMessages = [];
+                    currentSessionId = Date.now();
+                }
+                
+                updateHistoryList();
+            }
+        }
+
+        // 修改更新历史记录列表函数
+        function updateHistoryList() {
+            const historyList = document.getElementById('historyList');
+            const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+            
+            historyList.innerHTML = history.map(item => {
+                const time = new Date(item.time).toLocaleString();
+                return `
+                    <div class="history-item" data-id="${item.id}">
+                        <div class="content" onclick="showHistoryChat('${encodeURIComponent(JSON.stringify(item))}')">
+                            <div class="preview">${item.preview}</div>
+                            <div class="time">${time}</div>
+                        </div>
+                        <button class="delete-btn" onclick="event.stopPropagation(); deleteHistoryItem(${item.id});">🗑️</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // ... 现有的初始化代码 ...
+            
+            // 清空输入框
+            const messageInput = document.getElementById('messageInput');
+            messageInput.value = '';
+            
+            // 创建新会话
+            currentSessionId = Date.now();
+            currentMessages = [];
+            
+            // 加载历史记录
+            updateHistoryList();
+
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // 监听滚动事件
+            chatMessages.addEventListener('scroll', () => {
+                updateScrollIndicator();
+            });
+
+            // 监听窗口大小变化
+            window.addEventListener('resize', () => {
+                updateScrollIndicator();
+            });
+
+            // 创建消息容器
+            const messagesContainer = document.createElement('div');
+            messagesContainer.id = 'messagesContainer';
+            messagesContainer.className = 'messages-container';
+            chatMessages.appendChild(messagesContainer);
+
+            // 监听消息容器的变化
+            const observer = new MutationObserver(() => {
+                scrollToBottom(false);
+            });
+            
+            observer.observe(messagesContainer, {
+                childList: true,
+                subtree: true
+            });
+        });
+
+        // 页面离开时保存当前会话
+        window.addEventListener('beforeunload', () => {
+            if (currentMessages.length > 0) {
+                const firstUserMessage = currentMessages.find(msg => msg.role === 'user');
+                if (firstUserMessage) {
+                    saveHistory(firstUserMessage.content);
+                }
+            }
+        });
     </script>
 </body>
 </html> 
