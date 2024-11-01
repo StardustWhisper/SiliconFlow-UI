@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         .chat-container {
-            max-width: 1200px;
+            max-width: calc(100vw - 200px);
             margin: 2rem auto;
             background: var(--card-bg);
             border-radius: 12px;
@@ -19,20 +19,23 @@
             display: grid;
             grid-template-columns: 280px 1fr;
             gap: 1rem;
-            height: calc(100vh - 150px);
+            height: auto;
+            min-height: calc(100vh - 300px);
         }
 
         .settings-panel {
             background: var(--bg-secondary);
             padding: 1rem;
             border-radius: 8px;
-            height: 100%;
+            height: 96%;
+            max-height: calc(100vh - 200px);
             display: flex;
             flex-direction: column;
         }
 
         .chat-area {
             display: flex;
+            margin-right: 0.5rem;
             flex-direction: column;
             height: 100%;
         }
@@ -42,13 +45,15 @@
             overflow-y: scroll;
             padding: 1rem;
             margin-bottom: 1rem;
+            margin-right: 1rem;
             border-radius: 8px;
             background: var(--bg-secondary);
-            height: calc(100vh - 300px);
+            max-height: calc(100vh - 350px);
+            /* height: calc(100vh - 200px); */
             display: flex;
             flex-direction: column;
             position: relative;
-            scroll-behavior: smooth;
+            scroll-behavior: auto;
         }
 
         .messages-container {
@@ -61,9 +66,10 @@
 
         .message {
             margin-bottom: 1rem;
+            /* margin-right: 1rem; */
             padding: 1rem;
             border-radius: 8px;
-            max-width: 85%;
+            max-width: 95%;
             position: relative;
             word-wrap: break-word;
             opacity: 0;
@@ -88,12 +94,13 @@
         }
 
         .ai-message {
-            background: var(--bg-primary);
+            background: var(--card-bg);
             border: 1px solid var(--border-color);
+            margin-right: 1rem;
         }
 
         .input-container {
-            background: var(--bg-primary);
+            background: var(--card-bg);
             border-radius: 8px;
             padding: 1rem;
             display: flex;
@@ -101,7 +108,9 @@
             align-items: flex-start;
             position: sticky;
             bottom: 0;
-            margin-top: auto;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            margin-right: 0.5rem;
         }
 
         .chat-input {
@@ -109,7 +118,7 @@
             padding: 0.8rem;
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            background: var(--bg-primary);
+            background: var(--bg-secondary);
             color: var(--text-primary);
             resize: none;
             min-height: 60px;
@@ -142,7 +151,7 @@
         @media (max-width: 1024px) {
             .chat-container {
                 grid-template-columns: 1fr;
-                height: calc(100vh - 100px);
+                height: calc(100vh - 200px);
             }
 
             .settings-panel {
@@ -331,6 +340,7 @@
 
         .chat-history {
             margin-top: 1rem;
+            margin-bottom: 1rem;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -471,6 +481,75 @@
         .footer-github:hover svg {
             transform: scale(1.1);
         }
+
+        .parameter-controls {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .parameter-item {
+            margin-bottom: 1rem;
+        }
+
+        .parameter-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .parameter-item label {
+            display: block;
+            margin-bottom: 0.3rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .slider-container input[type="range"] {
+            flex: 1;
+            height: 4px;
+            -webkit-appearance: none;
+            background: var(--border-color);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb:hover {
+            background: var(--secondary-color);
+        }
+
+        .slider-container span {
+            min-width: 2.5em;
+            text-align: right;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 0.4rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -556,6 +635,46 @@
                     </optgroup>
                 </select>
 
+                <!-- 添加参数控制 -->
+                <div class="parameter-controls">
+                    <div class="parameter-item">
+                        <label for="maxTokens">Max Tokens</label>
+                        <input type="number" id="maxTokens" value="1024" min="1" max="4096">
+                    </div>
+
+                    <div class="parameter-item">
+                        <label for="temperature">Temperature</label>
+                        <div class="slider-container">
+                            <input type="range" id="temperature" min="0" max="2" step="0.1" value="0.7">
+                            <span id="temperatureValue">0.7</span>
+                        </div>
+                    </div>
+
+                    <div class="parameter-item">
+                        <label for="topP">Top-P</label>
+                        <div class="slider-container">
+                            <input type="range" id="topP" min="0" max="1" step="0.1" value="0.7">
+                            <span id="topPValue">0.7</span>
+                        </div>
+                    </div>
+
+                    <div class="parameter-item">
+                        <label for="topK">Top-K</label>
+                        <div class="slider-container">
+                            <input type="range" id="topK" min="0" max="100" step="1" value="50">
+                            <span id="topKValue">50</span>
+                        </div>
+                    </div>
+
+                    <div class="parameter-item">
+                        <label for="frequencyPenalty">Frequency Penalty</label>
+                        <div class="slider-container">
+                            <input type="range" id="frequencyPenalty" min="0" max="2" step="0.1" value="0.0">
+                            <span id="frequencyPenaltyValue">0.0</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 添加聊天历史记录部分 -->
                 <div class="chat-history">
                     <div class="history-header">
@@ -624,6 +743,16 @@
         let currentSessionId = Date.now();
         let currentMessages = [];
 
+        // 添加滑块值更新
+        const sliders = ['temperature', 'topP', 'topK', 'frequencyPenalty'];
+        sliders.forEach(id => {
+            const slider = document.getElementById(id);
+            const value = document.getElementById(`${id}Value`);
+            slider.addEventListener('input', () => {
+                value.textContent = slider.value;
+            });
+        });
+
         // 修改发送消息函数
         async function sendMessage() {
             const messageInput = document.getElementById('messageInput');
@@ -662,8 +791,13 @@
                     },
                     body: JSON.stringify({
                         model: model,
-                        messages: currentMessages,  // 发送完整的对话历史
-                        stream: true
+                        messages: currentMessages,
+                        stream: true,
+                        max_tokens: parseInt(document.getElementById('maxTokens').value),
+                        temperature: parseFloat(document.getElementById('temperature').value),
+                        top_p: parseFloat(document.getElementById('topP').value),
+                        top_k: parseInt(document.getElementById('topK').value),
+                        frequency_penalty: parseFloat(document.getElementById('frequencyPenalty').value)
                     })
                 });
 
