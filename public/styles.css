@@ -196,44 +196,89 @@ input:focus, textarea:focus, select:focus {
 }
 
 /* 按钮样式 */
-button {
-    background-color: var(--primary-color);
+button,
+.button,
+.back-button,
+.new-chat-button,
+.send-button,
+.clear-history-btn,
+.generate-button {
+    background: var(--primary-color);
     color: white;
-    padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0.8rem 1.2rem;
     font-size: 1rem;
-    font-weight: 500;
-    transition: background-color 0.2s, transform 0.1s;
-}
-
-button:hover {
-    background-color: var(--secondary-color);
-    transform: translateY(-1px);
-}
-
-.secondary-button {
-    background-color: var(--bg-secondary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-}
-
-.secondary-button:hover {
-    background-color: var(--border-color);
-}
-
-.seed-button {
-    padding: 0.75rem;
-    min-width: 44px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 4px var(--shadow-color);
 }
 
-.generate-button {
-    width: 100%;
-    margin-top: 1rem;
+button:hover,
+.button:hover,
+.back-button:hover,
+.new-chat-button:hover,
+.send-button:hover,
+.clear-history-btn:hover,
+.generate-button:hover {
+    background: var(--secondary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+button:active,
+.button:active,
+.back-button:active,
+.new-chat-button:active,
+.send-button:active,
+.clear-history-btn:active,
+.generate-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px var(--shadow-color);
+}
+
+/* 特殊按钮样式调整 */
+.clear-history-btn {
+    padding: 0.5rem;
+    font-size: 1.2rem;
+    min-width: 40px;
+    height: 40px;
+}
+
+.send-button {
+    min-width: 80px;
+}
+
+/* 禁用状态 */
+button:disabled,
+.button:disabled {
+    background: var(--bg-secondary);
+    cursor: not-allowed;
+    transform: none;
+    opacity: 0.7;
+}
+
+/* 容器内按钮的对比度增强 */
+.settings-panel button,
+.chat-area button,
+.parameter-controls button {
+    background: var(--primary-color);
+    color: white;
+    font-weight: 500;
+    z-index: 1;
+}
+
+/* 确保按钮在暗色主题下也足够显眼 */
+[data-theme="dark"] button,
+[data-theme="dark"] .button {
+    background: var(--primary-color);
+    color: white;
 }
 
 /* 容器样式 */
