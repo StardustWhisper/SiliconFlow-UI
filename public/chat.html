@@ -484,14 +484,55 @@
 
         .parameter-controls {
             margin: 1rem 0;
-            padding: 1rem;
+            padding: 0;
             background: var(--bg-primary);
             border-radius: 8px;
             border: 1px solid var(--border-color);
         }
 
+        .parameter-header {
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .parameter-header h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s;
+            color: var(--text-primary);
+        }
+
+        .toggle-icon.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .parameter-content {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            max-height: 500px;
+            opacity: 1;
+            overflow: hidden;
+        }
+
+        .parameter-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+            padding: 0 1rem;
+            border-top: none;
+        }
+
         .parameter-item {
             margin-bottom: 1rem;
+            margin-right: 1rem;
         }
 
         .parameter-item:last-child {
@@ -637,40 +678,46 @@
 
                 <!-- 添加参数控制 -->
                 <div class="parameter-controls">
-                    <div class="parameter-item">
-                        <label for="maxTokens">Max Tokens</label>
-                        <input type="number" id="maxTokens" value="1024" min="1" max="4096">
+                    <div class="parameter-header" onclick="toggleParameters()">
+                        <h3>参数设置</h3>
+                        <span class="toggle-icon">▼</span>
                     </div>
-
-                    <div class="parameter-item">
-                        <label for="temperature">Temperature</label>
-                        <div class="slider-container">
-                            <input type="range" id="temperature" min="0" max="2" step="0.1" value="0.7">
-                            <span id="temperatureValue">0.7</span>
+                    <div id="parameterContent" class="parameter-content">
+                        <div class="parameter-item">
+                            <label for="maxTokens">Max Tokens</label>
+                            <input type="number" id="maxTokens" value="1024" min="1" max="4096">
                         </div>
-                    </div>
 
-                    <div class="parameter-item">
-                        <label for="topP">Top-P</label>
-                        <div class="slider-container">
-                            <input type="range" id="topP" min="0" max="1" step="0.1" value="0.7">
-                            <span id="topPValue">0.7</span>
+                        <div class="parameter-item">
+                            <label for="temperature">Temperature</label>
+                            <div class="slider-container">
+                                <input type="range" id="temperature" min="0" max="2" step="0.1" value="0.7">
+                                <span id="temperatureValue">0.7</span>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="parameter-item">
-                        <label for="topK">Top-K</label>
-                        <div class="slider-container">
-                            <input type="range" id="topK" min="0" max="100" step="1" value="50">
-                            <span id="topKValue">50</span>
+                        <div class="parameter-item">
+                            <label for="topP">Top-P</label>
+                            <div class="slider-container">
+                                <input type="range" id="topP" min="0" max="1" step="0.1" value="0.7">
+                                <span id="topPValue">0.7</span>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="parameter-item">
-                        <label for="frequencyPenalty">Frequency Penalty</label>
-                        <div class="slider-container">
-                            <input type="range" id="frequencyPenalty" min="0" max="2" step="0.1" value="0.0">
-                            <span id="frequencyPenaltyValue">0.0</span>
+                        <div class="parameter-item">
+                            <label for="topK">Top-K</label>
+                            <div class="slider-container">
+                                <input type="range" id="topK" min="0" max="100" step="1" value="50">
+                                <span id="topKValue">50</span>
+                            </div>
+                        </div>
+
+                        <div class="parameter-item">
+                            <label for="frequencyPenalty">Frequency Penalty</label>
+                            <div class="slider-container">
+                                <input type="range" id="frequencyPenalty" min="0" max="2" step="0.1" value="0.0">
+                                <span id="frequencyPenaltyValue">0.0</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1134,6 +1181,50 @@
                 }
             }
         });
+
+        function toggleParameters() {
+            const content = document.getElementById('parameterContent');
+            const icon = document.querySelector('.toggle-icon');
+            const isCollapsed = content.classList.contains('collapsed');
+            
+            if (isCollapsed) {
+                content.classList.remove('collapsed');
+                icon.classList.remove('collapsed');
+            } else {
+                content.classList.add('collapsed');
+                icon.classList.add('collapsed');
+            }
+        }
+
+        // 在页面加载时初始化折叠状态
+        document.addEventListener('DOMContentLoaded', () => {
+            // 从 localStorage 获取保存的折叠状态
+            const isCollapsed = localStorage.getItem('parametersCollapsed') === 'true';
+            const content = document.getElementById('parameterContent');
+            const icon = document.querySelector('.toggle-icon');
+            
+            if (isCollapsed) {
+                content.classList.add('collapsed');
+                icon.classList.add('collapsed');
+            }
+        });
+
+        // 保存折叠状态到 localStorage
+        function toggleParameters() {
+            const content = document.getElementById('parameterContent');
+            const icon = document.querySelector('.toggle-icon');
+            const isCollapsed = content.classList.contains('collapsed');
+            
+            if (isCollapsed) {
+                content.classList.remove('collapsed');
+                icon.classList.remove('collapsed');
+                localStorage.setItem('parametersCollapsed', 'false');
+            } else {
+                content.classList.add('collapsed');
+                icon.classList.add('collapsed');
+                localStorage.setItem('parametersCollapsed', 'true');
+            }
+        }
     </script>
 </body>
 </html> 
