@@ -6,25 +6,53 @@ function initializeTheme() {
         document.body.style.backgroundImage = `url(${backgroundImage})`;
         // 分析背景图片颜色并应用
         analyzeAndApplyColors(backgroundImage);
+        // 隐藏主题切换开关
+        const themeSwitch = document.querySelector('.theme-switch');
+        if (themeSwitch) {
+            themeSwitch.style.display = 'none';
+        }
     } else {
         document.documentElement.style.setProperty('--background-image', 'none');
         document.body.style.backgroundImage = 'none';
         // 恢复默认颜色
         resetColors();
+        // 显示主题切换开关
+        const themeSwitch = document.querySelector('.theme-switch');
+        if (themeSwitch) {
+            themeSwitch.style.display = 'block';
+        }
     }
 
     // 初始化主题切换
+    initializeThemeToggle();
+}
+
+// 初始化主题切换功能
+function initializeThemeToggle() {
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
+        // 移除现有的事件监听器
+        themeToggle.removeEventListener('change', handleThemeChange);
+        
+        // 设置初始状态
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
         themeToggle.checked = savedTheme === 'dark';
 
-        themeToggle.addEventListener('change', (e) => {
-            const theme = e.target.checked ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
-        });
+        // 添加新的事件监听器
+        themeToggle.addEventListener('change', handleThemeChange);
+    }
+}
+
+// 处理主题切换
+function handleThemeChange(e) {
+    const theme = e.target.checked ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    
+    // 如果没有背景图片，重置颜色
+    if (!localStorage.getItem('backgroundImage')) {
+        resetColors();
     }
 }
 
@@ -188,15 +216,29 @@ document.addEventListener('DOMContentLoaded', initializeTheme);
 
 // 添加背景图片更新函数
 window.updateBackgroundImage = function(imageData) {
+    const themeSwitch = document.querySelector('.theme-switch');
+    
     if (imageData) {
         document.documentElement.style.setProperty('--background-image', `url(${imageData})`);
         document.body.style.backgroundImage = `url(${imageData})`;
         localStorage.setItem('backgroundImage', imageData);
         analyzeAndApplyColors(imageData);
+        // 隐藏主题切换开关
+        if (themeSwitch) {
+            themeSwitch.style.display = 'none';
+        }
     } else {
         document.documentElement.style.setProperty('--background-image', 'none');
         document.body.style.backgroundImage = 'none';
         localStorage.removeItem('backgroundImage');
         resetColors();
+        // 显示主题切换开关
+        if (themeSwitch) {
+            themeSwitch.style.display = 'block';
+        }
     }
-}; 
+};
+
+// 导出全局函数
+window.initializeThemeToggle = initializeThemeToggle;
+window.handleThemeChange = handleThemeChange;
