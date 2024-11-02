@@ -50,6 +50,10 @@
     {
       "src": "/(.*)",
       "dest": "public/$1"
+    },
+    {
+      "src": "/text-to-speech",
+      "dest": "public/text-to-speech.html"
     }
   ],
   "env": {
