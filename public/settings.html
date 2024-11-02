@@ -7,6 +7,7 @@
     <link rel="icon" href="logo/favicon.png" type="image/x-icon">
     <link rel="shortcut icon" href="logo/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="styles.css">
+    <script src="js/theme.js"></script>
     <style>
         .header {
             text-align: center;
@@ -214,6 +215,135 @@
         .footer-github:hover svg {
             transform: scale(1.1);
         }
+
+        .background-settings {
+            margin: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .background-preview {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: var(--bg-secondary);
+            position: relative;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .background-preview:hover {
+            border-color: var(--primary-color);
+        }
+
+        .background-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-hint {
+            position: absolute;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .background-controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .upload-button, .remove-button {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .upload-button {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .upload-button:hover {
+            background: var(--secondary-color);
+        }
+
+        .remove-button {
+            background: var(--error-color);
+            color: white;
+        }
+
+        .remove-button:hover {
+            opacity: 0.9;
+        }
+
+        .color-theme {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .color-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.1);
+        }
+
+        .color-swatch.active {
+            border-color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .dragover {
+            border-color: var(--primary-color);
+            background: var(--bg-primary);
+        }
+
+        .show-key-container {
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .show-key-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .show-key-label input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -239,9 +369,16 @@
         <div class="settings-container">
             <div class="settings-group">
                 <h2>API Key 设置</h2>
-                <input type="text" id="apiKey" class="api-key-input" placeholder="请输入您的 API Key">
+                <input type="password" id="apiKey" class="api-key-input" placeholder="请输入您的 API Key">
                 <button onclick="saveApiKey()" class="save-button">保存</button>
                 <div id="statusMessage" class="status-message"></div>
+
+                <div class="show-key-container">
+                    <label class="show-key-label">
+                        <input type="checkbox" id="showApiKey" onchange="toggleApiKeyVisibility()">
+                        显示 API Key
+                    </label>
+                </div>
 
                 <div class="api-key-guide">
                     <h3>如何获取 API Key</h3>
@@ -255,6 +392,31 @@
                         <li>复制API密钥：创建成功后，系统会生成一个API密钥。请务必将其复制并妥善保存，以备后续使用。</li>
                         <li>配置API密钥：在您的应用或服务中，使用此API密钥进行身份验证和调用SiliconCloud的服务。</li>
                     </ol>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <h2>背景设置</h2>
+                <div class="background-settings">
+                    <div class="background-preview" id="backgroundPreview">
+                        <img id="currentBackground" src="" alt="当前背景" style="display: none;">
+                        <div class="upload-hint" id="uploadHint">
+                            点击或拖拽图片到此处
+                        </div>
+                    </div>
+                    <input type="file" id="backgroundInput" accept="image/*" style="display: none;">
+                    <div class="background-controls">
+                        <button onclick="document.getElementById('backgroundInput').click()" class="upload-button">
+                            上传背景图片
+                        </button>
+                        <button onclick="removeBackground()" class="remove-button">
+                            移除背景
+                        </button>
+                    </div>
+                    <div class="color-theme">
+                        <label>主题色调</label>
+                        <div class="color-palette" id="colorPalette"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -280,6 +442,16 @@
             const savedApiKey = localStorage.getItem('apiKey');
             if (savedApiKey) {
                 document.getElementById('apiKey').value = savedApiKey;
+            }
+
+            // 恢复背景图片预览
+            const savedBackground = localStorage.getItem('backgroundImage');
+            if (savedBackground) {
+                const currentBackground = document.getElementById('currentBackground');
+                const uploadHint = document.getElementById('uploadHint');
+                currentBackground.src = savedBackground;
+                currentBackground.style.display = 'block';
+                uploadHint.style.display = 'none';
             }
 
             themeToggle.addEventListener('change', (e) => {
@@ -323,6 +495,228 @@
             setTimeout(() => {
                 statusMessage.style.display = 'none';
             }, 3000);
+        }
+
+        // 背景图片处理
+        const backgroundPreview = document.getElementById('backgroundPreview');
+        const backgroundInput = document.getElementById('backgroundInput');
+        const currentBackground = document.getElementById('currentBackground');
+        const uploadHint = document.getElementById('uploadHint');
+
+        // 初始化背景预览
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedBackground = localStorage.getItem('backgroundImage');
+            if (savedBackground) {
+                currentBackground.src = savedBackground;
+                currentBackground.style.display = 'block';
+                uploadHint.style.display = 'none';
+            }
+        });
+
+        // 拖放处理
+        backgroundPreview.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            backgroundPreview.classList.add('dragover');
+        });
+
+        backgroundPreview.addEventListener('dragleave', () => {
+            backgroundPreview.classList.remove('dragover');
+        });
+
+        backgroundPreview.addEventListener('drop', (e) => {
+            e.preventDefault();
+            backgroundPreview.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleImageUpload(file);
+            }
+        });
+
+        // 点击上传处理
+        backgroundPreview.addEventListener('click', () => {
+            backgroundInput.click();
+        });
+
+        backgroundInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleImageUpload(file);
+            }
+        });
+
+        // 图片处理函数
+        async function handleImageUpload(file) {
+            try {
+                // 检查文件大小
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('图片大小不能超过 5MB');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const imageData = e.target.result;
+                    
+                    // 压缩图片
+                    const compressedImage = await compressImage(imageData);
+                    
+                    // 更新预览
+                    currentBackground.src = compressedImage;
+                    currentBackground.style.display = 'block';
+                    uploadHint.style.display = 'none';
+
+                    // 保存到 localStorage
+                    localStorage.setItem('backgroundImage', compressedImage);
+
+                    // 分析图片颜色
+                    await analyzeImageColors(compressedImage);
+
+                    // 应用背景
+                    document.documentElement.style.setProperty('--background-image', `url(${compressedImage})`);
+                    document.body.style.backgroundImage = `url(${compressedImage})`;
+                };
+                reader.readAsDataURL(file);
+            } catch (error) {
+                console.error('处理图片时出错:', error);
+                alert('处理图片时出错: ' + error.message);
+            }
+        }
+
+        // 图片压缩
+        async function compressImage(dataUrl) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    let width = img.width;
+                    let height = img.height;
+                    const maxSize = 1920;
+
+                    if (width > height && width > maxSize) {
+                        height = (height * maxSize) / width;
+                        width = maxSize;
+                    } else if (height > maxSize) {
+                        width = (width * maxSize) / height;
+                        height = maxSize;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.8));
+                };
+                img.onerror = reject;
+                img.src = dataUrl;
+            });
+        }
+
+        // 颜色分析
+        async function analyzeImageColors(imageData) {
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            
+            try {
+                await new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = reject;
+                    img.src = imageData;
+                });
+
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const size = 100;
+                canvas.width = size;
+                canvas.height = size;
+                
+                ctx.drawImage(img, 0, 0, size, size);
+                const imageData = ctx.getImageData(0, 0, size, size);
+                const colors = getMainColors(imageData.data);
+                
+                updateColorPalette(colors);
+                
+                // 自动应用第一个主色调
+                if (colors.length > 0) {
+                    setThemeColor(colors[0]);
+                }
+            } catch (error) {
+                console.error('分析颜色时出错:', error);
+            }
+        }
+
+        // 获取主要颜色
+        function getMainColors(data) {
+            const colorMap = new Map();
+            const step = 4;
+
+            for (let i = 0; i < data.length; i += 4 * step) {
+                const r = Math.round(data[i] / 32) * 32;
+                const g = Math.round(data[i + 1] / 32) * 32;
+                const b = Math.round(data[i + 2] / 32) * 32;
+                const a = data[i + 3];
+
+                if (a < 128) continue;
+
+                const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+                if (brightness < 30 || brightness > 225) continue;
+
+                const color = `rgb(${r},${g},${b})`;
+                colorMap.set(color, (colorMap.get(color) || 0) + 1);
+            }
+
+            return Array.from(colorMap.entries())
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .map(([color]) => color);
+        }
+
+        // 更新颜色面板
+        function updateColorPalette(colors) {
+            const palette = document.getElementById('colorPalette');
+            palette.innerHTML = '';
+            
+            colors.forEach(color => {
+                const swatch = document.createElement('div');
+                swatch.className = 'color-swatch';
+                swatch.style.backgroundColor = color;
+                swatch.onclick = () => setThemeColor(color);
+                palette.appendChild(swatch);
+            });
+        }
+
+        // 设置主题色
+        function setThemeColor(color) {
+            document.documentElement.style.setProperty('--primary-color', color);
+            localStorage.setItem('primaryColor', color);
+            
+            document.querySelectorAll('.color-swatch').forEach(swatch => {
+                swatch.classList.toggle('active', swatch.style.backgroundColor === color);
+            });
+        }
+
+        // 移除背景
+        function removeBackground() {
+            if (confirm('确定要移除背景图片吗？')) {
+                localStorage.removeItem('backgroundImage');
+                currentBackground.style.display = 'none';
+                uploadHint.style.display = 'block';
+                document.documentElement.style.setProperty('--background-image', 'none');
+                document.body.style.backgroundImage = 'none';
+                
+                // 恢复默认主题色
+                document.documentElement.style.setProperty('--primary-color', '#4A90E2');
+                localStorage.removeItem('primaryColor');
+                
+                // 清空颜色面板
+                document.getElementById('colorPalette').innerHTML = '';
+            }
+        }
+
+        function toggleApiKeyVisibility() {
+            const apiKeyInput = document.getElementById('apiKey');
+            const showApiKey = document.getElementById('showApiKey');
+            apiKeyInput.type = showApiKey.checked ? 'text' : 'password';
         }
     </script>
 </body>

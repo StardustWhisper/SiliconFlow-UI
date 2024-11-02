@@ -35,12 +35,21 @@ body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     line-height: 1.6;
     transition: background-color 0.3s, color 0.3s;
+    background-image: var(--background-image, none);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
 }
 
 .container {
-    max-width: 1000px;
+    position: relative;
+    z-index: 1;
+    min-height: calc(100vh - 4rem);
     margin: 2rem auto;
     padding: 0 20px;
+    max-width: 1000px;
 }
 
 /* 头部样式 */
@@ -335,4 +344,17 @@ label {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--secondary-color);
+}
+
+/* 添加卡片背景样式 */
+.card-bg, 
+.settings-container,
+.main-content,
+.chat-container,
+.settings-panel,
+.text-panel,
+.image-display {
+    background-color: rgba(var(--card-bg-rgb, 216, 215, 215), 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
