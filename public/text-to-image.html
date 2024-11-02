@@ -459,7 +459,53 @@
             document.getElementById('status').style.display = 'none';
         }
 
-        // 图片生成函数
+        // 添加语言检测和翻译相关函数
+        function containsNonEnglish(text) {
+            return /[^\x00-\x7F]/.test(text);
+        }
+
+        async function translateToEnglish(text) {
+            const apiKey = localStorage.getItem('apiKey');
+            if (!apiKey) {
+                throw new Error('请先设置 API Key');
+            }
+
+            try {
+                const response = await fetch('https://api.siliconflow.cn/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "deepseek-ai/DeepSeek-V2.5",
+                        messages: [
+                            {
+                                "role": "system",
+                                "content": "你是一个专业的翻译助手。请将用户输入的文本翻译成英文，只返回翻译结果，不需要任何解释或额外内容。保持专业性和准确性，特别是在艺术和图像描述方面。"
+                            },
+                            {
+                                "role": "user",
+                                "content": text
+                            }
+                        ],
+                        temperature: 0.3
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('翻译请求失败');
+                }
+
+                const data = await response.json();
+                return data.choices[0].message.content.trim();
+            } catch (error) {
+                console.error('翻译错误:', error);
+                throw new Error('翻译失败: ' + error.message);
+            }
+        }
+
+        // 修改生成图片函数
         async function generateImage() {
             const apiKey = localStorage.getItem('apiKey');
             if (!apiKey) {
@@ -468,8 +514,10 @@
                 return;
             }
 
-            const prompt = document.getElementById('prompt').value;
-            if (!prompt) {
+            const promptInput = document.getElementById('prompt').value;
+            const negativePromptInput = document.getElementById('negativePrompt').value;
+
+            if (!promptInput) {
                 showStatus('请输入图片描述', true);
                 return;
             }
@@ -481,9 +529,23 @@
                 // 显示加载动画
                 loadingContainer.style.display = 'block';
                 imageContainer.innerHTML = '';
-                showStatus('正在生成图片，请稍候...');
+                showStatus('正在处理...');
 
-                const negativePrompt = document.getElementById('negativePrompt').value;
+                // 检查并翻译提示词
+                let prompt = promptInput;
+                let negativePrompt = negativePromptInput;
+
+                if (containsNonEnglish(promptInput)) {
+                    showStatus('正在翻译图片描述...');
+                    prompt = await translateToEnglish(promptInput);
+                }
+
+                if (negativePromptInput && containsNonEnglish(negativePromptInput)) {
+                    showStatus('正在翻译负面提示词...');
+                    negativePrompt = await translateToEnglish(negativePromptInput);
+                }
+
+                // 获取其他参数
                 const model = document.getElementById('model').value;
                 let imageSize;
                 const imageSizeSelect = document.getElementById('imageSize');
@@ -508,10 +570,9 @@
                     imageSize = imageSizeSelect.value;
                 }
 
-                const guidanceScale = parseFloat(document.getElementById('guidanceScale').value);
-                const inferenceSteps = parseInt(document.getElementById('inferenceSteps').value);
-                const seed = parseInt(document.getElementById('seed').value) || 0;
+                showStatus('正在生成图片...');
 
+                // 调用图片生成 API
                 const response = await fetch('https://api.siliconflow.cn/v1/images/generations', {
                     method: 'POST',
                     headers: {
@@ -519,13 +580,13 @@
                         'Authorization': `Bearer ${apiKey}`
                     },
                     body: JSON.stringify({
-                        prompt,
+                        prompt: prompt,
                         negative_prompt: negativePrompt,
-                        model,
+                        model: model,
                         image_size: imageSize,
-                        guidance_scale: guidanceScale,
-                        num_inference_steps: inferenceSteps,
-                        seed
+                        guidance_scale: parseFloat(document.getElementById('guidanceScale').value),
+                        num_inference_steps: parseInt(document.getElementById('inferenceSteps').value),
+                        seed: parseInt(document.getElementById('seed').value) || 0
                     })
                 });
 
@@ -559,8 +620,8 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                showStatus('生成失败: ' + error.message, true);
-                // 出错时也隐藏加载动画
+                showStatus(error.message || '生成失败', true);
+            } finally {
                 loadingContainer.style.display = 'none';
             }
         }
