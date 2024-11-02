@@ -49,10 +49,14 @@
             box-shadow: 0 4px 6px var(--shadow-color);
             display: grid;
             grid-template-columns: 280px 1fr;
+            grid-template-areas: 
+                "settings image"
+                "settings prompt";
             gap: 2rem;
         }
 
         .settings-panel {
+            grid-area: settings;
             background: var(--bg-secondary);
             padding: 1.5rem;
             border-radius: 8px;
@@ -65,10 +69,12 @@
         }
 
         .image-display {
+            grid-area: image;
             background: var(--bg-secondary);
             padding: 1.5rem;
             border-radius: 8px;
-            min-height: 400px;
+            min-height: 300px;
+            position: relative;
         }
 
         .setting-item {
@@ -111,13 +117,13 @@
         }
 
         .prompt-item textarea {
-            width: 100%;
+            width: 97%;
             padding: 0.4rem;
             border: 1px solid var(--border-color);
             border-radius: 4px;
             background: var(--bg-primary);
             color: var(--text-primary);
-            min-height: 120px;
+            min-height: 100px;
             resize: vertical;
             font-size: 0.9rem;
         }
@@ -191,7 +197,10 @@
         @media (max-width: 1024px) {
             .main-content {
                 grid-template-columns: 1fr;
-                gap: 1rem;
+                grid-template-areas: 
+                    "settings"
+                    "image"
+                    "prompt";
             }
 
             .settings-panel {
@@ -202,8 +211,16 @@
 
         .loading-container {
             display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             text-align: center;
             padding: 2rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px var(--shadow-color);
+            z-index: 10;
         }
 
         .loading-bar {
@@ -341,8 +358,8 @@
                         <label for="imageSize">分辨率</label>
                         <div class="resolution-container">
                             <select id="imageSize" onchange="handleResolutionChange(this.value)">
-                                <option value="900x1440">900x1440</option>
                                 <option value="1440x900">1440x900</option>
+                                <option value="900x1440">900x1440</option>
                                 <option value="1024x1024">1024x1024</option>
                                 <option value="512x512">512x512</option>
                                 <option value="768x1024">768x1024</option>
@@ -364,7 +381,7 @@
 
                     <div class="setting-item">
                         <label for="inferenceSteps">推理步数</label>
-                        <input type="number" id="inferenceSteps" value="10" min="1" max="50">
+                        <input type="number" id="inferenceSteps" value="25" min="1" max="50">
                     </div>
 
                     <div class="setting-item">
@@ -376,17 +393,11 @@
                     </div>
 
                     <div class="prompt-item">
-                        <label for="prompt">图片描述</label>
-                        <textarea id="prompt" placeholder="请输入详细的图片描述"></textarea>
-                    </div>
-
-                    <div class="prompt-item">
                         <label for="negativePrompt">负面提示词</label>
                         <textarea id="negativePrompt" placeholder="请输入不希望出现在图片中的元素"></textarea>
                     </div>
-                </div>
 
-                <button onclick="generateImage()" class="generate-button">生成图片</button>
+                </div>
             </div>
 
             <div class="image-display">
@@ -396,6 +407,15 @@
                     <div class="loading-text">正在生成图片，请稍候...</div>
                 </div>
                 <div id="imageContainer" class="image-container"></div>
+            </div>
+
+            <div class="prompt-panel">
+                <div class="prompt-item">
+                    <!-- <label for="prompt">图片描述</label> -->
+                    <textarea id="prompt" placeholder="请输入详细的图片描述"></textarea>
+                </div>
+
+                <button onclick="generateImage()" class="generate-button">生成图片</button>
             </div>
         </div>
     </div>
