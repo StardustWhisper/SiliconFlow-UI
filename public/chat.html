@@ -559,6 +559,8 @@
             flex: 1;
             height: 4px;
             -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
             background: var(--border-color);
             border-radius: 2px;
             outline: none;
@@ -620,6 +622,19 @@
             font-size: 1.2rem;
             font-weight: bold;
         }
+
+        .prompt-input {
+            width: 100%;
+            min-height: 80px;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            resize: vertical;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -680,7 +695,7 @@
                         </div>
 
                         <div class="parameter-item">
-                            <label for="topP">Top-P</label>
+                            <label for="topP">Top P</label>
                             <div class="slider-container">
                                 <input type="range" id="topP" min="0" max="1" step="0.1" value="0.7">
                                 <span id="topPValue">0.7</span>
@@ -688,7 +703,7 @@
                         </div>
 
                         <div class="parameter-item">
-                            <label for="topK">Top-K</label>
+                            <label for="topK">Top K</label>
                             <div class="slider-container">
                                 <input type="range" id="topK" min="0" max="100" step="1" value="50">
                                 <span id="topKValue">50</span>
@@ -701,6 +716,12 @@
                                 <input type="range" id="frequencyPenalty" min="0" max="2" step="0.1" value="0.0">
                                 <span id="frequencyPenaltyValue">0.0</span>
                             </div>
+                        </div>
+
+                        <!-- 添加 Prompt 设置 -->
+                        <div class="parameter-item">
+                            <label for="systemPrompt">System Prompt</label>
+                            <textarea id="systemPrompt" class="prompt-input" placeholder="输入系统提示词，用于设定AI助手的角色和行为..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -796,6 +817,7 @@
             const apiKey = localStorage.getItem('apiKey');
             const model = document.getElementById('modelSelect').value;
             const message = messageInput.value.trim();
+            const systemPrompt = document.getElementById('systemPrompt').value.trim();
 
             if (!message) {
                 alert('请输入消息');
@@ -806,6 +828,14 @@
                 alert('请先设置 API Key');
                 window.location.href = 'settings.html';
                 return;
+            }
+
+            // 添加系统提示词（如果存在且是新对话）
+            if (systemPrompt && currentMessages.length === 0) {
+                currentMessages.push({
+                    role: 'system',
+                    content: systemPrompt
+                });
             }
 
             // 添加用户消息到当前会话
@@ -828,12 +858,12 @@
                     body: JSON.stringify({
                         model: model,
                         messages: currentMessages,
-                        stream: true,
                         max_tokens: parseInt(document.getElementById('maxTokens').value),
                         temperature: parseFloat(document.getElementById('temperature').value),
                         top_p: parseFloat(document.getElementById('topP').value),
                         top_k: parseInt(document.getElementById('topK').value),
-                        frequency_penalty: parseFloat(document.getElementById('frequencyPenalty').value)
+                        frequency_penalty: parseFloat(document.getElementById('frequencyPenalty').value),
+                        stream: true
                     })
                 });
 
