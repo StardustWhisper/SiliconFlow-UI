@@ -612,7 +612,10 @@
                     // 生成文件名
                     const date = new Date().toISOString().split('T')[0];
                     const modelName = model.split('/').pop();
-                    const fileName = `${modelName}_GS${guidanceScale}_Steps${inferenceSteps}_Seed${seed}_${date}.png`;
+                    const guidanceScaleValue = document.getElementById('guidanceScale').value;
+                    const inferenceStepsValue = document.getElementById('inferenceSteps').value;
+                    const seedValue = document.getElementById('seed').value;
+                    const fileName = `${modelName}_GS${guidanceScaleValue}_Steps${inferenceStepsValue}_Seed${seedValue}_${date}.png`;
 
                     img.onclick = () => downloadImage(img.src, fileName);
                     imageContainer.appendChild(img);
