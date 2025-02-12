@@ -368,31 +368,38 @@
 
         <div class="settings-container">
             <div class="settings-group">
-                <h2>API Key 设置</h2>
-                <input type="password" id="apiKey" class="api-key-input" placeholder="请输入您的 API Key">
-                <button onclick="saveApiKey()" class="save-button">保存</button>
-                <div id="statusMessage" class="status-message"></div>
-
+                <h2>API 设置</h2>
+                <input type="password" id="apiKey" class="api-key-input" placeholder="请输入 SiliconFlow API Key">
+                <input type="password" id="zhipuKey" class="api-key-input" placeholder="请输入智谱 AI API Key">
                 <div class="show-key-container">
-                    <label class="show-key-label">
-                        <input type="checkbox" id="showApiKey" onchange="toggleApiKeyVisibility()">
-                        显示 API Key
-                    </label>
+                    <input type="checkbox" id="showApiKey" onchange="toggleApiKeyVisibility()">
+                    <label for="showApiKey">显示密钥</label>
                 </div>
+                <button onclick="saveApiKey()" class="save-button">保存设置</button>
+                <div id="statusMessage" class="status-message"></div>
+            </div>
 
-                <div class="api-key-guide">
-                    <h3>如何获取 API Key</h3>
-                    <p>要在SiliconFlow上申请API Key，您可以按照以下步骤进行操作：</p>
-                    <p><a href="https://siliconflow.cn/zh-cn/" target="_blank" rel="noopener noreferrer">访问 SiliconFlow 官网</a></p>
-                    <ol>
-                        <li>注册SiliconCloud账户：首先，您需要访问SiliconCloud平台并注册一个账户。</li>
-                        <li>登录账户：完成注册后，使用您的账户信息登录到SiliconCloud。</li>
-                        <li>访问API密钥管理页面：登录后，前往API密钥管理页面。在这里，您将看到创建新API密钥的选项。</li>
-                        <li>创建API密钥：点击"创建新API密钥"按钮，并按照提示填写相关信息。</li>
-                        <li>复制API密钥：创建成功后，系统会生成一个API密钥。请务必将其复制并妥善保存，以备后续使用。</li>
-                        <li>配置API密钥：在您的应用或服务中，使用此API密钥进行身份验证和调用SiliconCloud的服务。</li>
-                    </ol>
-                </div>
+            <div class="api-key-guide">
+                <h3>如何获取 API Key？</h3>
+                <ol>
+                    <li>
+                        SiliconFlow API Key:
+                        <ol>
+                            <li>访问 <a href="https://www.siliconflow.cn" target="_blank">SiliconFlow官网</a></li>
+                            <li>注册并登录您的账号</li>
+                            <li>在控制台中找到并复制您的 API Key</li>
+                        </ol>
+                    </li>
+                    <li>
+                        智谱 AI API Key:
+                        <ol>
+                            <li>访问 <a href="https://open.bigmodel.cn" target="_blank">智谱AI开放平台</a></li>
+                            <li>注册并登录您的账号</li>
+                            <li>在API Key管理页面创建并复制您的 API Key</li>
+                        </ol>
+                    </li>
+                </ol>
+                <p>请妥善保管您的 API Key，不要分享给他人。</p>
             </div>
 
             <div class="settings-group">
@@ -435,9 +442,13 @@
             themeToggle.checked = savedTheme === 'dark';
 
             // 恢复保存的API Key
-            const savedApiKey = localStorage.getItem('apiKey');
-            if (savedApiKey) {
-                document.getElementById('apiKey').value = savedApiKey;
+            const apiKey = localStorage.getItem('apiKey');
+            const zhipuKey = localStorage.getItem('zhipuKey');
+            if (apiKey) {
+                document.getElementById('apiKey').value = apiKey;
+            }
+            if (zhipuKey) {
+                document.getElementById('zhipuKey').value = zhipuKey;
             }
 
             // 恢复背景图片预览
@@ -457,40 +468,29 @@
             });
         });
 
-        function saveApiKey() {
-            const apiKey = document.getElementById('apiKey').value.trim();
+        async function saveApiKey() {
+            const apiKey = document.getElementById('apiKey').value;
+            const zhipuKey = document.getElementById('zhipuKey').value;
             const statusMessage = document.getElementById('statusMessage');
-            const successMessage = document.getElementById('successMessage');
 
-            if (apiKey) {
+            try {
+                // 保存两个API Key
                 localStorage.setItem('apiKey', apiKey);
+                localStorage.setItem('zhipuKey', zhipuKey);
                 
-                // 显示成功提示
+                // 显示成功消息
+                const successMessage = document.getElementById('successMessage');
                 successMessage.style.display = 'block';
-                
-                // 3秒后隐藏提示
                 setTimeout(() => {
                     successMessage.style.display = 'none';
-                }, 3000);
+                }, 2000);
 
-                // 可选：返回主页
-                setTimeout(() => {
-                    window.location.href = 'home.html';
-                }, 1500);
-            } else {
-                showStatus('请输入有效的 API Key', 'error');
+                statusMessage.textContent = '设置已保存';
+                statusMessage.style.color = 'var(--success-color)';
+            } catch (error) {
+                statusMessage.textContent = '保存设置失败: ' + error.message;
+                statusMessage.style.color = 'var(--error-color)';
             }
-        }
-
-        function showStatus(message, type) {
-            const statusMessage = document.getElementById('statusMessage');
-            statusMessage.textContent = message;
-            statusMessage.className = `status-message ${type}`;
-            statusMessage.style.display = 'block';
-
-            setTimeout(() => {
-                statusMessage.style.display = 'none';
-            }, 3000);
         }
 
         // 背景图片处理
@@ -710,9 +710,12 @@
         }
 
         function toggleApiKeyVisibility() {
-            const apiKeyInput = document.getElementById('apiKey');
             const showApiKey = document.getElementById('showApiKey');
-            apiKeyInput.type = showApiKey.checked ? 'text' : 'password';
+            const apiKeyInput = document.getElementById('apiKey');
+            const zhipuKeyInput = document.getElementById('zhipuKey');
+            const type = showApiKey.checked ? 'text' : 'password';
+            apiKeyInput.type = type;
+            zhipuKeyInput.type = type;
         }
     </script>
 </body>
