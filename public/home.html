@@ -7,6 +7,7 @@
     <link rel="icon" href="logo/favicon.png" type="image/x-icon">
     <link rel="shortcut icon" href="logo/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rpg-awesome/0.2.0/css/rpg-awesome.min.css">
     <script src="js/theme.js"></script>
     <style>
 
@@ -142,6 +143,10 @@
                 height: 32px;
             }
         }
+        .feature-icon .ra {
+            font-size: 2rem; /* Adjust size as needed */
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -154,22 +159,13 @@
             </div>
             <div class="header-controls">
                 <a href="settings.html" class="settings-button">⚙️ 设置</a>
-                <div class="theme-switch">
-                    <label class="switch">
-                        <input type="checkbox" id="themeToggle">
-                        <span class="slider round">
-                            <span class="moon">🌙</span>
-                            <span class="sun">☀️</span>
-                        </span>
-                    </label>
-                </div>
             </div>
         </div>
 
         <!-- 功能卡片区域 -->
         <div class="features-grid">
             <a href="chat.html" class="feature-card">
-                <div class="feature-icon">💬</div>
+                <div class="feature-icon"><i class="ra ra-quill-ink"></i></div>
                 <div class="feature-title">文本对话</div>
                 <div class="feature-description">
                     与 AI 进行自然语言对话，获取信息、建议和帮助
@@ -177,7 +173,7 @@
             </a>
 
             <a href="text-to-image.html" class="feature-card">
-                <div class="feature-icon">🎨</div>
+                <div class="feature-icon"><i class="ra ra-sword"></i></div>
                 <div class="feature-title">文生图</div>
                 <div class="feature-description">
                     通过文字描述生成独特的 AI 艺术作品
@@ -185,7 +181,7 @@
             </a>
 
             <a href="image-to-image.html" class="feature-card">
-                <div class="feature-icon">🖼️</div>
+                <div class="feature-icon"><i class="ra ra-shield"></i></div>
                 <div class="feature-title">图生图</div>
                 <div class="feature-description">
                     上传参考图片，创作新的艺术变体
@@ -193,7 +189,7 @@
             </a>
 
             <a href="speech-to-text.html" class="feature-card">
-                <div class="feature-icon">🎙️</div>
+                <div class="feature-icon"><i class="ra ra-scroll-unfurled"></i></div>
                 <div class="feature-title">语音转文本</div>
                 <div class="feature-description">
                     将语音内容转换为文字，支持多种语言
@@ -201,7 +197,7 @@
             </a>
 
             <a href="text-to-speech.html" class="feature-card">
-                <div class="feature-icon">🔊</div>
+                <div class="feature-icon"><i class="ra ra-horn-call"></i></div>
                 <div class="feature-title">文本转语音</div>
                 <div class="feature-description">
                     将文本转换为自然的语音输出，支持多种语音风格
@@ -232,4 +228,4 @@
         });
     </script>
 </body>
-</html> 
+</html>

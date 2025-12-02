@@ -1,30 +1,16 @@
 :root {
-    /* Light theme */
-    --bg-primary: #c8c5c5;
-    --bg-secondary: #dbdada;
-    --text-primary: #0e0e0e;
-    --text-secondary: #000000;
-    --border-color: #fffdfd;
-    --primary-color: #4A90E2;
-    --secondary-color: #357ABD;
-    --shadow-color: rgba(0, 0, 0, 0.1);
-    --card-bg: #d8d7d7;
-    --success-color: #90EE90;
-    --error-color: #FFB6C1;
-}
-
-[data-theme="dark"] {
-    --bg-primary: #1a1a1a;
-    --bg-secondary: #2d2d2d;
-    --text-primary: #e9ecef;
-    --text-secondary: #adb5bd;
-    --border-color: #404040;
-    --primary-color: #4361ee;
-    --secondary-color: #3f37c9;
-    --shadow-color: rgba(0, 0, 0, 0.3);
-    --card-bg: #2d2d2d;
-    --success-color: #4CAF50;
-    --error-color: #F44336;
+    /* Medieval theme */
+    --bg-primary: #fdf6e3; /* Parchment */
+    --bg-secondary: #f4e8c1;
+    --text-primary: #5a3a22; /* Dark Brown */
+    --text-secondary: #8b4513; /* Saddle Brown */
+    --border-color: #d2b48c; /* Tan */
+    --primary-color: #800000; /* Maroon */
+    --secondary-color: #5a0000;
+    --shadow-color: rgba(0, 0, 0, 0.2);
+    --card-bg: rgba(244, 232, 193, 0.8);
+    --success-color: #556b2f; /* Dark Olive Green */
+    --error-color: #8b0000; /* Dark Red */
 }
 
 body {
@@ -32,14 +18,14 @@ body {
     padding: 0;
     background-color: var(--bg-primary);
     color: var(--text-primary);
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: 'Georgia', 'Times New Roman', serif;
     line-height: 1.6;
     transition: background-color 0.3s, color 0.3s;
-    background-image: var(--background-image, none);
-    background-size: cover;
+    background-image: url('https://www.toptal.com/designers/subtlepatterns/uploads/old_paper.png');
+    background-size: auto;
     background-position: center;
     background-attachment: fixed;
-    background-repeat: no-repeat;
+    background-repeat: repeat;
     min-height: 100vh;
 }
 
@@ -132,6 +118,31 @@ input:checked + .slider:before {
     line-height: 34px;
 }
 
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.feature-card {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px var(--shadow-color);
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px var(--shadow-color);
+}
+
 /* 设置区域样式 */
 .settings-section, .prompt-section {
     background: var(--card-bg);
@@ -140,6 +151,7 @@ input:checked + .slider:before {
     border-radius: 12px;
     box-shadow: 0 4px 6px var(--shadow-color);
     transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid var(--border-color);
 }
 
 .settings-grid {
@@ -192,7 +204,7 @@ input, textarea, select {
 input:focus, textarea:focus, select:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.1);
 }
 
 /* 按钮样式 */
@@ -204,8 +216,8 @@ button,
 .clear-history-btn,
 .generate-button {
     background: var(--primary-color);
-    color: white;
-    border: none;
+    color: #fdf6e3;
+    border: 1px solid var(--secondary-color);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -218,6 +230,7 @@ button,
     position: relative;
     overflow: hidden;
     box-shadow: 0 2px 4px var(--shadow-color);
+    font-family: 'Georgia', 'Times New Roman', serif;
 }
 
 button:hover,
@@ -269,16 +282,9 @@ button:disabled,
 .chat-area button,
 .parameter-controls button {
     background: var(--primary-color);
-    color: white;
+    color: #fdf6e3;
     font-weight: 500;
     z-index: 1;
-}
-
-/* 确保按钮在暗色主题下也足够显眼 */
-[data-theme="dark"] button,
-[data-theme="dark"] .button {
-    background: var(--primary-color);
-    color: white;
 }
 
 /* 容器样式 */
@@ -329,6 +335,7 @@ button:disabled,
     box-shadow: 0 4px 8px var(--shadow-color);
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid var(--border-color);
 }
 
 .image-container img:hover {
@@ -389,17 +396,4 @@ label {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--secondary-color);
-}
-
-/* 添加卡片背景样式 */
-.card-bg, 
-.settings-container,
-.main-content,
-.chat-container,
-.settings-panel,
-.text-panel,
-.image-display {
-    background-color: rgba(var(--card-bg-rgb, 216, 215, 215), 0.85);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
 }
