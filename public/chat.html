@@ -762,7 +762,7 @@
         // 首先定义loadModelList函数
         async function loadModelList() {
             try {
-                const response = await fetch('/model.list');
+                const response = await fetch('./model.list');
                 if (!response.ok) {
                     throw new Error(`Failed to load model list: ${response.status} ${response.statusText}`);
                 }
@@ -1265,4 +1265,4 @@
         }
     </script>
 </body>
-</html> 
+</html>

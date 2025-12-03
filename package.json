@@ -17,7 +17,8 @@
     "cors": "^2.8.5",
     "axios": "^1.6.2",
     "compression": "^1.7.4",
-    "helmet": "^7.1.0"
+    "helmet": "^7.1.0",
+    "png-metadata": "^1.0.0" 
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
