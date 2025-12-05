@@ -1,4 +1,3 @@
-// 合并所有DOMContentLoaded事件处理
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         // 1. 初始化其他UI状态
@@ -26,8 +25,8 @@ async function sendMessage() {
     const systemPrompt = `你是一个翻译,必须把我的输入翻译输出.请遵守以下规则:
 如果输入的是一个英语单词或者短语,请输出详细解释和音标以及例句.
 如果输入是英语句子或者是其他语言,就输出中文.
-如果输入是中文,就输出英语.`;
-
+如果输入是中文,就输出英语.`
+    }
     if (!message) {
         alert('请输入消息');
         return;
