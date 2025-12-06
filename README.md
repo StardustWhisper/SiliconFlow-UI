@@ -1,3 +1,21 @@
+# Deployment
+
+## Cloudflare Pages
+
+This project is ready to be deployed on [Cloudflare Pages](https://pages.cloudflare.com/).
+
+1.  Push this repository to your GitHub account.
+2.  Log in to the Cloudflare Dashboard and go to **App & Services** > **Compute (Workers & Pages)**.
+3.  Click **Create an application** > **Pages** > **Connect to Git**.
+4.  Select this repository.
+5.  Configure the build settings:
+    *   **Build command**: `npm run build` (or leave empty, as it's just `echo` currently)
+    *   **Build output directory**: `public`
+    *   **Root directory**: (Leave empty or `/`)
+6.  Click **Save and Deploy**.
+
+Cloudflare Pages will automatically detect the `functions` directory and deploy the API endpoints alongside your static site.
+
 # SiliconFlow AI 助手
 ![alt text](screenshots/screenshot.png)
 一个基于 SiliconFlow API 的多功能 AI 助手，支持 AI 对话、文生图、图生图和语音转文本等功能。
