@@ -1,14 +1,71 @@
+// 首先定义loadModelList函数
+async function loadModelList() {
+    try {
+        const response = await fetch('./model.list');
+        if (!response.ok) {
+            throw new Error(`Failed to load model list: ${response.status} ${response.statusText}`);
+        }
+
+        const text = await response.text();
+        const modelSelect = document.getElementById('modelSelect');
+        const optgroup = modelSelect.querySelector('optgroup');
+
+        // 清空现有选项
+        optgroup.innerHTML = '';
+
+        // 解析每一行并添加选项
+        const lines = text.split('\n');
+        lines.forEach(line => {
+            line = line.trim();
+            if (line) {
+                const [modelName, modelId] = line.split(':').map(s => s.trim());
+                if (modelName && modelId) {
+                    const option = document.createElement('option');
+                    option.value = modelId;
+                    option.textContent = modelName;
+                    optgroup.appendChild(option);
+                }
+            }
+        });
+
+        if (optgroup.children.length === 0) {
+            throw new Error('No models found in model.list');
+        }
+    } catch (error) {
+        console.error('Error loading model list:', error);
+        const modelSelect = document.getElementById('modelSelect');
+        const optgroup = modelSelect.querySelector('optgroup');
+        optgroup.innerHTML = `<option value="" disabled>加载模型列表失败: ${error.message}</option>`;
+        throw error; // 重新抛出错误以便外部捕获
+    }
+}
+
+// 合并所有DOMContentLoaded事件处理
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // 1. 初始化其他UI状态
+        // 1. 首先加载模型列表
+        await loadModelList();
+        console.log('Model list loaded successfully');
+
+        // 2. 处理参数面板折叠状态
+        const isCollapsed = localStorage.getItem('parametersCollapsed') === 'true';
+        const content = document.getElementById('parameterContent');
+        const icon = document.querySelector('.toggle-icon');
+
+        if (isCollapsed) {
+            content.classList.add('collapsed');
+            icon.classList.add('collapsed');
+        }
+
+        // 3. 初始化其他UI状态
         const messageInput = document.getElementById('messageInput');
         messageInput.value = '';
 
-        // 2. 创建新会话
+        // 4. 创建新会话
         currentSessionId = Date.now();
         currentMessages = [];
 
-        // 3. 加载历史记录
+        // 5. 加载历史记录
         updateHistoryList();
 
     } catch (error) {
@@ -20,13 +77,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function sendMessage() {
     const messageInput = document.getElementById('messageInput');
     const apiKey = localStorage.getItem('apiKey');
-    const model = 'tencent/Hunyuan-MT-7B';
+    const model = document.getElementById('modelSelect').value;
     const message = messageInput.value.trim();
-    const systemPrompt = `你是一个翻译,必须把我的输入翻译输出.请遵守以下规则:
-如果输入的是一个英语单词或者短语,请输出详细解释和音标以及例句.
-如果输入是英语句子或者是其他语言,就输出中文.
-如果输入是中文,就输出英语.`
-    }
+    const systemPrompt = document.getElementById('systemPrompt').value.trim();
+
     if (!message) {
         alert('请输入消息');
         return;
@@ -66,6 +120,11 @@ async function sendMessage() {
             body: JSON.stringify({
                 model: model,
                 messages: currentMessages,
+                max_tokens: parseInt(document.getElementById('maxTokens').value),
+                temperature: parseFloat(document.getElementById('temperature').value),
+                top_p: parseFloat(document.getElementById('topP').value),
+                top_k: parseInt(document.getElementById('topK').value),
+                frequency_penalty: parseFloat(document.getElementById('frequencyPenalty').value),
                 stream: true
             })
         });
