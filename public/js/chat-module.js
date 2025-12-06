@@ -80,7 +80,10 @@ function appendMessage(content, type) {
     messageDiv.className = `message ${type}-message`;
 
     if (type === 'user') {
-        messageDiv.textContent = content;
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        contentDiv.textContent = content;
+        messageDiv.appendChild(contentDiv);
         const copyButtons = createCopyButtons(content);
         messageDiv.appendChild(copyButtons);
     } else if (type === 'ai') {

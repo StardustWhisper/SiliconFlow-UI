@@ -81,6 +81,10 @@
     margin-left: auto;
 }
 
+.message-content {
+    display: inline-block;
+}
+
 .ai-message {
     background: var(--card-bg);
     border: 1px solid var(--border-color);

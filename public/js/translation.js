@@ -1,3 +1,4 @@
+// 合并所有DOMContentLoaded事件处理
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         // 1. 初始化其他UI状态
