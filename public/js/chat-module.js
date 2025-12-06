@@ -84,7 +84,6 @@ function appendMessage(content, type) {
         contentDiv.className = 'message-content';
         contentDiv.textContent = content;
         messageDiv.appendChild(contentDiv);
-
         const copyButtons = createCopyButtons(content);
         messageDiv.appendChild(copyButtons);
     } else if (type === 'ai') {
