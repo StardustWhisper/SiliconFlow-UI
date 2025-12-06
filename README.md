@@ -1,136 +1,106 @@
-# Deployment
-
-## Cloudflare Pages
-
-This project is ready to be deployed on [Cloudflare Pages](https://pages.cloudflare.com/).
-
-1.  Push this repository to your GitHub account.
-2.  Log in to the Cloudflare Dashboard and go to **App & Services** > **Compute (Workers & Pages)**.
-3.  Click **Create an application** > **Pages** > **Connect to Git**.
-4.  Select this repository.
-5.  Configure the build settings:
-    *   **Build command**: `npm run build` (or leave empty, as it's just `echo` currently)
-    *   **Build output directory**: `public`
-    *   **Root directory**: (Leave empty or `/`)
-6.  Click **Save and Deploy**.
-
-Cloudflare Pages will automatically detect the `functions` directory and deploy the API endpoints alongside your static site.
-
 # SiliconFlow AI 助手
-![alt text](screenshots/screenshot.png)
-一个基于 SiliconFlow API 的多功能 AI 助手，支持 AI 对话、文生图、图生图和语音转文本等功能。
 
-## 功能特点
+![Project Screenshot](screenshots/screenshot.png)
 
-### 1. AI 对话
-- 支持多种大语言模型选择（包括免费和高级模型）
-- Markdown 格式渲染和语法高亮
-- 支持复制对话内容（纯文本和 Markdown 格式）
-- 对话历史记录管理
-- 实时流式响应
-- 平滑滚动和进度指示
+一个基于 SiliconFlow (硅基流动) API 构建的全能 AI 助手。集成了 AI 对话、绘画、语音识别、语音合成和翻译等多种功能，为您提供一站式的 AI 体验。
 
-### 2. 文生图
-- 支持多种 AI 模型选择（FLUX、SD等）
-- 丰富的参数调整：
-  - 引导比例（1-20）
-  - 推理步数（1-50）
-  - 自定义分辨率（64-2048）
-  - 随机种子生成
-- 支持正向和负向提示词
-- 生成进度动画显示
-- 一键下载生成的图片
+## ✨ 功能特点
 
-### 3. 图生图
-- 支持拖拽上传图片
-- 实时图片预览
-- 可调节参数：
-  - 变化强度（0.1-1.0）
-  - 引导比例
-  - 推理步数
-  - 图像尺寸
-  - 随机种子
-- 支持正向和负向提示词
-- 一键下载生成的图片
+### 1. 🤖 AI 智能对话
+*   **多模型支持**：无缝切换各类大语言模型（如 Qwen, Yi, DeepSeek 等）。
+*   **完整体验**：支持 Markdown 渲染、代码高亮、流式响应。
+*   **历史记录**：自动保存对话历史，随时回顾。
+*   **便捷操作**：一键复制内容，支持深色模式。
 
-### 4. 语音转文本
-- 支持多种音频格式
-- 拖拽上传音频文件
-- 音频预览播放
-- 一键复制转换结果
-- 支持多语言识别
+### 2. 🎨 文生图 (Text to Image)
+*   **强大引擎**：基于 FLUX, Stable Diffusion 3.5, CogView 等顶尖模型。
+*   **精细控制**：自定义分辨率、引导比例 (Guidance Scale)、推理步数 (Steps) 和随机种子 (Seed)。
+*   **负面提示**：支持 Negative Prompts 排除不需要的元素。
+*   **实时预览**：生成进度可视化，支持一键下载。
 
+### 3. 🖼️ 图生图 (Image to Image)
+*   **创意重绘**：上传参考图，调整重绘幅度 (Strength)，让 AI 重新演绎。
+*   **交互体验**：支持拖拽上传，实时预览。
 
-## 部署说明
+### 4. 🗣️ 语音转文本 (Speech to Text)
+*   **音频听写**：拖拽上传音频文件，快速准确地转换为文字。
+*   **多语言**：支持多种语言的语音识别。
 
-### 1. 本地开发部署
+### 5. 🔊 语音合成 (Text to Speech)
+*   **文字转语音**：输入文本，生成自然流畅的语音文件。
+*   **播放控制**：支持在线试听和下载。
+
+### 6. 🌐 实时翻译
+*   **智能翻译**：支持中英互译及多语言翻译。
+*   **场景优化**：自动识别输入内容类型（单词/句子）并提供相应的最佳翻译结果。
+
+## 🚀 快速开始
+
+### 本地开发
+
+1.  **克隆仓库**
+    ```bash
+    git clone https://github.com/StardustWhisper/SiliconFlow-UI.git
+    cd SiliconFlow-UI
+    ```
+
+2.  **安装依赖**
+    ```bash
+    npm install
+    ```
+
+3.  **启动开发服务器**
+    ```bash
+    npm run dev
+    ```
+    访问 `http://localhost:8080` 即可使用。
+
+### 生产环境运行
 
 ```bash
-# 安装依赖
-npm install
-
-# 开发环境运行
-npm run dev
-
-# 生产环境运行
 npm run start
 ```
 
-### 2. Vercel 部署
+## ⚙️ 配置说明
 
-1. Fork 本项目到你的 GitHub 账户
+在使用任何功能之前，请点击页面右上角的 **设置** 图标（或首次使用时的提示）配置您的 API Key。
 
-2. 在 Vercel 中导入项目：
-   - 登录 [Vercel](https://vercel.com)
-   - 点击 "New Project"
-   - 选择你 fork 的仓库
-   - 点击 "Import"
+*   **API Key 获取**：请前往 [SiliconFlow 官网](https://cloud.siliconflow.cn/) 注册并申请 API Key。如果是使用 GLM 系列模型，可能需要单独配置智谱 AI 的 Key。
+*   **本地存储**：API Key 仅保存在您浏览器的 LocalStorage 中，不会上传至任何第三方服务器，请放心使用。
 
-3. 配置项目：
-   - Framework Preset: 选择 "Other"
-   - Build Command: `npm run build`
-   - Output Directory: `dist`
-   - Install Command: `npm install`
+## 📦 部署指南
 
-4. 环境变量设置（可选）：
-   ```
-   NODE_ENV=production
-   PORT=8080
-   ALLOWED_ORIGINS=your-domain.com
-   ```
+### ☁️ Cloudflare Pages (推荐)
 
-5. 点击 "Deploy" 开始部署
+本项目专门优化了对 **Cloudflare Pages** 的支持，包含后端代理功能（用于解决跨域图片下载问题）。
 
-### 3. Docker 部署
+1.  Fork 本仓库到您的 GitHub。
+2.  登录 Cloudflare Dashboard，进入 **Workers & Pages** -> **Create Application** -> **Pages** -> **Connect to Git**。
+3.  选择本项目仓库。
+4.  **构建设置 (Build Settings)**:
+    *   **Build command**: `npm run build` (或者留空)
+    *   **Build output directory**: `public`
+5.  点击 **Deploy**。Cloudflare 会自动识别 `functions` 目录并部署后端 API。
 
-1. 使用预构建镜像：
+### ▲ Vercel
+
+1.  在 Vercel控制台 导入您的 GitHub 仓库。
+2.  **Framework Preset**: 选择 `Other`。
+3.  **Build Command**: `npm run build`
+4.  **Output Directory**: `public`
+5.  点击 Deploy。
+
+### 🐳 Docker
+
+如果您偏好容器化部署：
+
+**方式一：使用 Docker CLI**
 ```bash
-# 拉取镜像
-docker pull your-registry/siliconflow-ui:latest
-
-# 运行容器
-docker run -d \
-  -p 8080:8080 \
-  -e NODE_ENV=production \
-  -e ALLOWED_ORIGINS=your-domain.com \
-  your-registry/siliconflow-ui:latest
+docker build -t siliconflow-ui .
+docker run -d -p 8080:8080 siliconflow-ui
 ```
 
-2. 本地构建部署：
-```bash
-# 构建镜像
-docker build -t siliconflow-ui:latest .
-
-# 运行容器
-docker run -d \
-  -p 8080:8080 \
-  -e NODE_ENV=production \
-  siliconflow-ui:latest
-```
-
-3. Docker Compose 部署：
-
-创建 `docker-compose.yml`:
+**方式二：使用 Docker Compose**
 ```yaml
 version: '3.8'
 services:
@@ -140,51 +110,16 @@ services:
       - "8080:8080"
     environment:
       - NODE_ENV=production
-      - ALLOWED_ORIGINS=your-domain.com
-    restart: unless-stopped
 ```
+运行 `docker-compose up -d` 即可。
 
-运行：
-```bash
-docker-compose up -d
-```
+## 🛠️ 技术栈
 
+*   **Frontend**: Native HTML5, CSS3, JavaScript (ES6+)
+*   **UI/UX**: Responsive Design, Dark Mode Support
+*   **Markdown**: Marked.js
+*   **Backend (Optional)**: Cloudflare Functions / Node.js Express (仅用于辅助图片下载)
 
-## 环境要求
-
-- Node.js >= 18.0.0
-- NPM >= 8.0.0
-- 现代浏览器支持
-- 支持 WebSocket（用于流式响应）
-
-## 使用指南
-
-### 1. API Key 设置
-- 访问设置页面配置 API Key
-- 按照指引在 SiliconFlow 平台申请
-- 所有功能共用同一个 API Key
-
-### 2. 功能使用
-- 对话：选择合适的模型开始对话
-- 文生图：调整参数生成图片
-- 图生图：上传参考图片创作
-- 语音转文本：上传音频文件转换
-
-### 3. 历史记录
-- 查看历史对话
-- 继续历史会话
-- 删除单条记录
-- 清空所有记录
-
-## 更新日志
-
-### v1.3.0
-- 统一的 API Key 管理
-- 改进的对话历史功能
-- 优化的用户界面
-- 新增进度指示器
-- 改进的错误处理
-
-## 许可证
+## 📄 许可证
 
 MIT License
